@@ -9,6 +9,10 @@ authors = ["Kingsword kingsword09 <kingsword09@gmail.com>"]
 license = "MIT"
 
 [dependencies]
-reqwest = { workspace = true }
+reqwest = { workspace = true, features = ["json", "zstd"] }
 serde = { workspace = true, features = ["derive"] }
 serde_json = { workspace = true }
+zstd = "0.13.3"
+
+[dev-dependencies]
+tokio = { version = "1.45.1", features = ["full"] }

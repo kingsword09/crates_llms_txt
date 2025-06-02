@@ -1,0 +1,18 @@
+{
+  "name": "@kingsword09/crates-llms-txt",
+  "version": "0.0.1",
+  "license": "MIT",
+  "exports": {
+    ".": "./mod.ts"
+  },
+  "tasks": {
+    "test": "deno test -A",
+    "test:update": "deno test -A -- --update"
+  },
+  "publish": {
+    "include": [
+      "mod.ts",
+      "crates_llms_*"
+    ]
+  }
+}
