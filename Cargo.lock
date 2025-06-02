@@ -117,7 +117,7 @@ checksum = "773648b94d0e5d620f64f280777445740e61fe701025087ec8b57f45c791888b"
 
 [[package]]
 name = "crates_llms_txt"
-version = "0.0.1"
+version = "0.0.2"
 dependencies = [
  "reqwest",
  "serde",
@@ -132,9 +132,6 @@ version = "0.0.0"
 dependencies = [
  "crates_llms_txt",
  "js-sys",
- "serde-wasm-bindgen",
- "serde_json",
- "tokio",
  "wasm-bindgen",
  "wasm-bindgen-futures",
 ]
@@ -980,17 +977,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "5f0e2c6ed6606019b4e29e69dbaba95b11854410e5347d525002456dbbb786b6"
 dependencies = [
  "serde_derive",
-]
-
-[[package]]
-name = "serde-wasm-bindgen"
-version = "0.5.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "f3b143e2833c57ab9ad3ea280d21fd34e285a42837aeb0ee301f4f41890fa00e"
-dependencies = [
- "js-sys",
- "serde",
- "wasm-bindgen",
 ]
 
 [[package]]

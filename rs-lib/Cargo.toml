@@ -1,12 +1,13 @@
 [package]
 name = "crates_llms_txt"
-version = "0.0.1"
+version = "0.0.2"
 edition = "2021"
 description = "A Rust library for generating llms.txt and llms-full.txt files"
 homepage = "https://github.com/kingsword09"
 repository = "https://github.com/kingsword09/crates-llms-txt"
 authors = ["Kingsword kingsword09 <kingsword09@gmail.com>"]
 license = "MIT"
+include = ["src/*.rs", "README.md"]
 
 [dependencies]
 reqwest = { workspace = true, features = ["json", "zstd"] }
