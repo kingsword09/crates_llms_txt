@@ -20,11 +20,11 @@ use wasm_bindgen::prelude::*;
 /// ```
 ///
 #[wasm_bindgen]
-pub async fn get_llms_config(
+pub async fn get_llms_config_online(
   lib_name: &str,
   version: Option<String>,
 ) -> Result<JsValue, JsValue> {
-  match LLMsStandardConfig::get_llms_config(lib_name, version).await {
+  match LLMsStandardConfig::get_llms_config_online(lib_name, version).await {
     Ok(config) => {
       println!("{:#?}", config);
       let obj = Object::new();

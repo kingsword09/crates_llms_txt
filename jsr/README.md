@@ -35,8 +35,8 @@ Fetches the standard configuration for a given Rust crate and version.
 - Returns: LLMsStandardConfig object LLMsStandardConfig Type
 
 ```ts
-type SessionItem = { title: string; description: string; link: string };
-type FullSessionItem = { content: string; link: string };
+type SessionItem = { title: string; description: string; link: string; };
+type FullSessionItem = { content: string; link: string; };
 
 export type LLMsStandardConfig = {
   libName: string;

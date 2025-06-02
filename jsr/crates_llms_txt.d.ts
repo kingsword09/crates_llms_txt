@@ -20,7 +20,4 @@
  * let config = LLMsStandardConfig::get_llms_config("clap", Some("4.5.39")).await.unwrap();
  * ```
  */
-export function get_llms_config(
-  lib_name: string,
-  version?: string | null,
-): Promise<any>;
+export function get_llms_config_online(lib_name: string, version?: string | null): Promise<any>;

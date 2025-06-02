@@ -1,4 +1,4 @@
-import { get_llms_config } from "./crates_llms_txt.js";
+import { get_llms_config_online } from "./crates_llms_txt.js";
 
 type SessionItem = { title: string; description: string; link: string; };
 
@@ -32,11 +32,11 @@ export type LLMsStandardConfig = {
  * const llmsStandardConfig = await get_llms_standard_config("clap", "4.5.39");
  * ```
  */
-export const get_llms_standard_config = async (
+export const get_llms_standard_config_by_net = async (
   lib_name: string,
   version?: string,
 ): Promise<LLMsStandardConfig | null> => {
-  const config: LLMsStandardStringConfig = await get_llms_config(lib_name, version);
+  const config: LLMsStandardStringConfig = await get_llms_config_online(lib_name, version);
 
   if (!config) {
     return null;
