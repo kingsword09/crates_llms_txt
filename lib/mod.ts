@@ -24,6 +24,13 @@ export type LLMsStandardConfig = {
  * @returns LLMsStandardConfig - The standard configuration for LLMs
  *
  * @module
+ *
+ * @example
+ * ```ts
+ * import { get_llms_standard_config } from "jsr:@llms/llms@^0.1.0";
+ *
+ * const llmsStandardConfig = await get_llms_standard_config("clap", "4.5.39");
+ * ```
  */
 export const get_llms_standard_config = async (lib_name: string, version?: string): Promise<LLMsStandardConfig> => {
   const config: LLMsStandardStringConfig = await get_llms_config(lib_name, version);
