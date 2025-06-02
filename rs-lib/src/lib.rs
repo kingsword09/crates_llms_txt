@@ -60,9 +60,9 @@ struct StdDocs;
 impl StdDocs {
     pub async fn fetch_docs(
         lib_name: &str,
-        version: Option<&str>,
+        version: Option<String>,
     ) -> Result<DocsRoot, Box<dyn std::error::Error>> {
-        let version = version.unwrap_or("latest");
+        let version = version.unwrap_or("latest".to_string());
 
         let response = reqwest::get(format!("{}/{}/{}/json", DOCS_BASE_URL, lib_name, version))
             .await?
@@ -96,24 +96,16 @@ impl LLMsStandardConfig {
 
     pub async fn get_llms_config(
         lib_name: &str,
-        version: Option<&str>,
+        version: Option<String>,
     ) -> Result<Self, Box<dyn std::error::Error>> {
         let mut config = LLMsStandardConfig::new();
-        if let Ok(docs) = StdDocs::fetch_docs(lib_name, version).await {
-            let base_url = format!(
-                "{}/{}/{}/source",
-                DOCS_BASE_URL,
-                lib_name,
-                version.unwrap_or(docs.crate_version.as_str())
-            );
+        if let Ok(docs) = StdDocs::fetch_docs(lib_name, version.clone()).await {
+            let version = version.unwrap_or(docs.crate_version);
+            let base_url = format!("{}/{}/{}/source", DOCS_BASE_URL, lib_name, version);
             config.sessions.push(SessionItem {
                 title: lib_name.to_string(),
                 description: "".to_string(),
-                link: format!(
-                    "https://docs.rs/{}/{}",
-                    lib_name,
-                    version.unwrap_or(&docs.crate_version)
-                ),
+                link: format!("https://docs.rs/{}/{}", lib_name, version),
             });
             for (_, item) in docs.index {
                 if let Some(docs) = item.docs {
