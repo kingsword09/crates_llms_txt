@@ -19,7 +19,7 @@ if (import.meta.main) {
     },
     postBuild() {
       Deno.copyFileSync("../LICENSE", ".npm/LICENSE");
-      Deno.copyFileSync("../lib/README.md", ".npm/README.md");
+      Deno.copyFileSync("../jsr/README.md", ".npm/README.md");
     },
   });
 }
