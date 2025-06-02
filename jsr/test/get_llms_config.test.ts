@@ -7,14 +7,21 @@ Deno.test("get_llms_config", async (t) => {
   const version = "4.5.39";
   const llmsStandardConfig = await get_llms_standard_config(libName, version);
 
-  assertEquals(llmsStandardConfig.libName, "clap");
-  assertEquals(llmsStandardConfig.version, "4.5.39");
+  assertEquals(llmsStandardConfig!.libName, "clap");
+  assertEquals(llmsStandardConfig!.version, "4.5.39");
 
   await t.step("sessions", async (t) => {
-    await assertSnapshot(t, llmsStandardConfig.sessions);
+    await assertSnapshot(t, llmsStandardConfig!.sessions);
   });
 
   await t.step("full_sessions", async (t) => {
-    await assertSnapshot(t, llmsStandardConfig.fullSessions);
+    await assertSnapshot(t, llmsStandardConfig!.fullSessions);
   });
+});
+
+Deno.test("get_llms_config_failed", async (_t) => {
+  const libName = "opendal";
+  const version = "0.53.3";
+  const llmsStandardConfig = await get_llms_standard_config(libName, version);
+  assertEquals(llmsStandardConfig, null);
 });

@@ -266,18 +266,18 @@ export function get_llms_config(lib_name, version) {
 
 function __wbg_adapter_26(arg0, arg1) {
   wasm
-    ._dyn_core__ops__function__FnMut_____Output___R_as_wasm_bindgen__closure__WasmClosure___describe__invoke__hcc14b12a0011985a(
+    ._dyn_core__ops__function__FnMut_____Output___R_as_wasm_bindgen__closure__WasmClosure___describe__invoke__h7f3735f147f7d484(
       arg0,
       arg1,
     );
 }
 
 function __wbg_adapter_29(arg0, arg1, arg2) {
-  wasm.closure108_externref_shim(arg0, arg1, arg2);
+  wasm.closure123_externref_shim(arg0, arg1, arg2);
 }
 
-function __wbg_adapter_109(arg0, arg1, arg2, arg3) {
-  wasm.closure142_externref_shim(arg0, arg1, arg2, arg3);
+function __wbg_adapter_107(arg0, arg1, arg2, arg3) {
+  wasm.closure159_externref_shim(arg0, arg1, arg2, arg3);
 }
 
 const __wbindgen_enum_RequestCredentials = ["omit", "same-origin", "include"];
@@ -403,7 +403,7 @@ export function __wbg_new_23a2665fac83c611(arg0, arg1) {
       const a = state0.a;
       state0.a = 0;
       try {
-        return __wbg_adapter_109(a, state0.b, arg0, arg1);
+        return __wbg_adapter_107(a, state0.b, arg0, arg1);
       } finally {
         state0.a = a;
       }
@@ -422,11 +422,6 @@ export function __wbg_new_405e22f390576ce2() {
 
 export function __wbg_new_a12002a7f91c75be(arg0) {
   const ret = new Uint8Array(arg0);
-  return ret;
-}
-
-export function __wbg_new_c68d7209be747379(arg0, arg1) {
-  const ret = new Error(getStringFromWasm0(arg0, arg1));
   return ret;
 }
 
@@ -598,13 +593,13 @@ export function __wbindgen_cb_drop(arg0) {
   return ret;
 }
 
-export function __wbindgen_closure_wrapper811(arg0, arg1, arg2) {
-  const ret = makeMutClosure(arg0, arg1, 74, __wbg_adapter_26);
+export function __wbindgen_closure_wrapper816(arg0, arg1, arg2) {
+  const ret = makeMutClosure(arg0, arg1, 85, __wbg_adapter_26);
   return ret;
 }
 
-export function __wbindgen_closure_wrapper943(arg0, arg1, arg2) {
-  const ret = makeMutClosure(arg0, arg1, 109, __wbg_adapter_29);
+export function __wbindgen_closure_wrapper961(arg0, arg1, arg2) {
+  const ret = makeMutClosure(arg0, arg1, 124, __wbg_adapter_29);
   return ret;
 }
 

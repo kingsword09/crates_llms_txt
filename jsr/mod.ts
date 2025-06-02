@@ -12,8 +12,8 @@ type LLMsStandardStringConfig = { lib_name: string; version: string; sessions: s
 export type LLMsStandardConfig = {
   libName: string;
   version: string;
-  sessions: SessionItem[];
-  fullSessions: FullSessionItem[];
+  sessions?: SessionItem[];
+  fullSessions?: FullSessionItem[];
 };
 
 /**
@@ -32,13 +32,20 @@ export type LLMsStandardConfig = {
  * const llmsStandardConfig = await get_llms_standard_config("clap", "4.5.39");
  * ```
  */
-export const get_llms_standard_config = async (lib_name: string, version?: string): Promise<LLMsStandardConfig> => {
+export const get_llms_standard_config = async (
+  lib_name: string,
+  version?: string,
+): Promise<LLMsStandardConfig | null> => {
   const config: LLMsStandardStringConfig = await get_llms_config(lib_name, version);
+
+  if (!config) {
+    return null;
+  }
 
   return {
     libName: config.lib_name,
     version: config.version,
-    sessions: JSON.parse(config.sessions),
-    fullSessions: JSON.parse(config.full_sessions),
+    sessions: config.sessions ? JSON.parse(config.sessions) : undefined,
+    fullSessions: config.full_sessions ? JSON.parse(config.full_sessions) : undefined,
   } satisfies LLMsStandardConfig;
 };

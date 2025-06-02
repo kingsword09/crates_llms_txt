@@ -83,11 +83,11 @@ impl StdDocs {
     let client = reqwest::Client::builder().build().unwrap();
     let version = version.unwrap_or("latest".to_string());
     let url = format!("{}/{}/{}/json", DOCS_BASE_URL, lib_name, version);
-    let response = client.get(url).send().await.unwrap();
+    let response = client.get(url).send().await?;
     let headers = response.headers().clone();
 
     // Get the response body as raw bytes
-    let body_bytes = response.bytes().await.unwrap();
+    let body_bytes = response.bytes().await?;
 
     let content_encoding = headers
       .get(header::CONTENT_ENCODING)
@@ -98,13 +98,9 @@ impl StdDocs {
     if let Some(encoding) = content_encoding {
       if encoding.eq_ignore_ascii_case("zstd") {
         println!("Content-Encoding is Zstd. Decompressing...");
-        decompressed_bytes = zstd::decode_all(&body_bytes[..]).unwrap();
+        decompressed_bytes = zstd::decode_all(&body_bytes[..])?;
       } else {
-        println!(
-                    "Content-Encoding is '{}', but we are only explicitly handling 'zstd'. \
-                 Assuming reqwest handled it or it's plain.",
-                    encoding
-                );
+        println!("Content-Encoding is '{}', but we are only explicitly handling 'zstd'. Assuming reqwest handled it or it's plain.", encoding);
         decompressed_bytes = body_bytes.into_iter().collect(); // Convert Bytes to Vec<u8>
       }
     } else {
@@ -114,7 +110,7 @@ impl StdDocs {
 
     // Now, parse the (potentially decompressed) bytes as JSON
     let json_data: DocsRoot =
-      serde_json::from_slice(&decompressed_bytes).unwrap();
+      serde_json::from_slice(&decompressed_bytes)?;
 
     Ok(json_data)
   }
@@ -160,7 +156,7 @@ impl LLMsStandardConfig {
   /// # Examples
   ///
   /// ```
-  /// let config = LLMsStandardConfig::get_llms_config("clap", Some("4.5.39")).await.unwrap();
+  /// let config = LLMsStandardConfig::get_llms_config("clap", Some("4.5.39")).await?;
   /// ```
   ///
   pub async fn get_llms_config(
@@ -190,7 +186,7 @@ impl LLMsStandardConfig {
           });
           config.full_sessions.push(FullSessionItem {
             content: docs,
-            link: link,
+            link,
           });
         }
       }
@@ -198,8 +194,8 @@ impl LLMsStandardConfig {
       return Ok(LLMsStandardStringConfig {
         lib_name: config.lib_name,
         version: config.version,
-        sessions: serde_json::to_string(&config.sessions).unwrap(),
-        full_sessions: serde_json::to_string(&config.full_sessions).unwrap(),
+        sessions: serde_json::to_string(&config.sessions).unwrap_or("".to_string()),
+        full_sessions: serde_json::to_string(&config.full_sessions).unwrap_or("".to_string()),
       });
     }
 
@@ -219,6 +215,17 @@ mod tests {
       .unwrap();
 
     assert_eq!(docs.crate_version, version);
+  }
+
+  #[tokio::test]
+  async fn test_fetch_docs_failed() {
+    let version = "0.53.3".to_string();
+    
+    let result = StdDocs::fetch_docs("opendal", Some(version.clone()))
+        .await
+        .unwrap_err();
+    
+    assert!(result.to_string().contains("expected value at line 1 column 1"));
   }
 
   #[tokio::test]

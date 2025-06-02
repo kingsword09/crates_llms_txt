@@ -53,6 +53,6 @@ pub async fn get_llms_config(
 
       Ok(obj.into())
     }
-    Err(err) => Err(JsValue::from(js_sys::Error::new(&format!("{:#}", err)))),
+    Err(_err) => Ok(JsValue::undefined()),
   }
 }
