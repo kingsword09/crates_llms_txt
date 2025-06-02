@@ -5,12 +5,14 @@ A repository for generating content for llms.txt and llms-full.txt files used by
 ## Purpose
 
 This repository contains the necessary content to generate:
+
 - `llms.txt`: A concise list of LLM-related Rust crates
 - `llms-full.txt`: Detailed information about LLM-related Rust crates including descriptions, features, and usage
 
 ## Content Structure
 
 The generated files include:
+
 - Core LLM libraries and bindings
 - Model implementations
 - Tokenizers and text processing
@@ -27,6 +29,7 @@ The generated files include:
 ## Contributing
 
 Feel free to contribute by:
+
 - Adding new LLM-related crates
 - Updating crate information
 - Improving descriptions

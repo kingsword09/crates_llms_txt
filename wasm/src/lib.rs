@@ -20,36 +20,39 @@ use wasm_bindgen::prelude::*;
 /// ```
 ///
 #[wasm_bindgen]
-pub async fn get_llms_config(lib_name: &str, version: Option<String>) -> Result<JsValue, JsValue> {
-    match LLMsStandardConfig::get_llms_config(lib_name, version).await {
-        Ok(config) => {
-            println!("{:#?}", config);
-            let obj = Object::new();
-            Reflect::set(
-                &obj,
-                &JsValue::from_str("lib_name"),
-                &JsValue::from(config.lib_name),
-            )?;
-            Reflect::set(
-                &obj,
-                &JsValue::from_str("version"),
-                &JsValue::from(config.version),
-            )?;
-            Reflect::set(
-                &obj,
-                &JsValue::from_str("sessions"),
-                // &JsValue::from(serde_json::to_string(&config.sessions).unwrap()),
-                &JsValue::from(&config.sessions),
-            )?;
-            Reflect::set(
-                &obj,
-                &JsValue::from_str("full_sessions"),
-                // &JsValue::from(serde_json::to_string(&config.full_sessions).unwrap()),
-                &JsValue::from(&config.full_sessions),
-            )?;
+pub async fn get_llms_config(
+  lib_name: &str,
+  version: Option<String>,
+) -> Result<JsValue, JsValue> {
+  match LLMsStandardConfig::get_llms_config(lib_name, version).await {
+    Ok(config) => {
+      println!("{:#?}", config);
+      let obj = Object::new();
+      Reflect::set(
+        &obj,
+        &JsValue::from_str("lib_name"),
+        &JsValue::from(config.lib_name),
+      )?;
+      Reflect::set(
+        &obj,
+        &JsValue::from_str("version"),
+        &JsValue::from(config.version),
+      )?;
+      Reflect::set(
+        &obj,
+        &JsValue::from_str("sessions"),
+        // &JsValue::from(serde_json::to_string(&config.sessions).unwrap()),
+        &JsValue::from(&config.sessions),
+      )?;
+      Reflect::set(
+        &obj,
+        &JsValue::from_str("full_sessions"),
+        // &JsValue::from(serde_json::to_string(&config.full_sessions).unwrap()),
+        &JsValue::from(&config.full_sessions),
+      )?;
 
-            Ok(obj.into())
-        }
-        Err(err) => Err(JsValue::from(js_sys::Error::new(&format!("{:#}", err)))),
+      Ok(obj.into())
     }
+    Err(err) => Err(JsValue::from(js_sys::Error::new(&format!("{:#}", err)))),
+  }
 }
