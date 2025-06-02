@@ -21,7 +21,9 @@ export type LLMsStandardConfig = {
  *
  * @param lib_name - The name of the library
  * @param version - The version of the library
- * @returns
+ * @returns LLMsStandardConfig - The standard configuration for LLMs
+ *
+ * @module
  */
 export const get_llms_standard_config = async (lib_name: string, version?: string): Promise<LLMsStandardConfig> => {
   const config: LLMsStandardStringConfig = await get_llms_config(lib_name, version);
