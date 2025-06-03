@@ -1,4 +1,5 @@
 use fetch_docs::OnlineDocs;
+use rustdoc_types::Visibility;
 use serde::{Deserialize, Serialize};
 use std::path::PathBuf;
 
@@ -77,6 +78,11 @@ impl LLMsStandardConfig {
 
     for (_, item) in docs.index {
       if let Some(docs) = item.docs {
+        // Skip private and default items
+        if item.visibility != Visibility::Public {
+          continue;
+        }
+
         let filename = item.span.unwrap().filename;
         let link = format!("{}/{}", base_url, filename.to_str().unwrap());
 

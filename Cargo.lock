@@ -163,7 +163,7 @@ name = "crates_llms_txt"
 version = "0.0.3"
 dependencies = [
  "reqwest",
- "rustdoc-json",
+ "rustdoc-json-stable",
  "rustdoc-types",
  "serde",
  "serde_json",
@@ -920,10 +920,10 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "719b953e2095829ee67db738b3bfa9fa368c94900df327b3f07fe6e794d2fe1f"
 
 [[package]]
-name = "rustdoc-json"
-version = "0.9.6"
+name = "rustdoc-json-stable"
+version = "0.9.7"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "df2651f0825c500d39b0471dd502356ee74f069b60de1d7c87e9b13bf41c68f8"
+checksum = "80bdbba03605300d0e6efb123f720216f6c8bc037d9a822601ce8880210b1c1b"
 dependencies = [
  "cargo-manifest",
  "cargo_metadata",

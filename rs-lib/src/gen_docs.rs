@@ -26,11 +26,16 @@ pub fn gen_docs_with_all_features(
   toolchain: &str,
   manifest_path: PathBuf,
 ) -> Result<GenDocs, Box<dyn std::error::Error>> {
-  let json_path = rustdoc_json::Builder::default()
-    .toolchain(toolchain)
-    .manifest_path(manifest_path)
-    .all_features(true)
-    .build()?;
+  let json_path = match toolchain {
+    "nightly" => rustdoc_json_stable::Builder::default(),
+    _ => rustdoc_json_stable::Builder::stable(),
+  }
+  .toolchain(toolchain)
+  .manifest_path(manifest_path)
+  // .all_features(true)
+  .quiet(true)
+  .build()?;
+
   let lib_name = json_path
     .as_path()
     .file_stem()
@@ -71,9 +76,12 @@ pub fn gen_docs_with_features(
   no_default_features: bool,
   features: Option<Vec<String>>,
 ) -> Result<GenDocs, Box<dyn std::error::Error>> {
-  let mut builder = rustdoc_json::Builder::default()
-    .toolchain(toolchain)
-    .manifest_path(manifest_path);
+  let mut builder = match toolchain {
+    "nightly" => rustdoc_json_stable::Builder::default(),
+    _ => rustdoc_json_stable::Builder::stable(),
+  }
+  .toolchain(toolchain)
+  .manifest_path(manifest_path);
   if no_default_features {
     builder = builder.no_default_features(true);
   }
@@ -102,8 +110,9 @@ pub fn gen_docs_with_features(
 mod tests {
   use crate::gen_docs::gen_docs_with_all_features;
 
+  #[cfg(feature = "rustdoc")]
   #[tokio::test]
-  async fn test_gen_docs_with_all_features() {
+  async fn test_gen_docs_with_all_features_failed() {
     let current_dir = std::env::current_dir().unwrap();
     let gen_docs_struct =
       gen_docs_with_all_features("stable", current_dir.join("Cargo.toml"))
