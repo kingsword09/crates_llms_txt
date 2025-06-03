@@ -13,7 +13,7 @@ crate-type = ["cdylib", "rlib"]
 name = "crates_llms_txt"
 
 [dependencies]
-crates_llms_txt = { path = "../rs-lib" }
+crates_llms_txt = { path = "../rs-lib", features = ["rustdoc"] }
 js-sys = { version = "=0.3.77" }
 wasm-bindgen = { version = "=0.2.100" }
 wasm-bindgen-futures = { version = "=0.4.50" }

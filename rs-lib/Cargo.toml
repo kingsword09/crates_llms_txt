@@ -9,13 +9,16 @@ authors = ["Kingsword kingsword09 <kingsword09@gmail.com>"]
 license = "MIT"
 include = ["src/*.rs", "README.md"]
 
+[features]
+rustdoc = ["rustdoc-json"]
+
 [dependencies]
 reqwest = { version = "^0.12.18", features = ["json", "zstd"] }
+rustdoc-json = { version = "0.9.6", optional = true}
 rustdoc-types = "0.41.0"
 serde = { version = "^1.0.219", features = ["derive"] }
 serde_json = "^1.0.140"
 zstd = "0.13.3"
-rustdoc-json = "0.9.6"
 
 [dev-dependencies]
 tokio = { version = "1.45.1", features = ["full"] }
