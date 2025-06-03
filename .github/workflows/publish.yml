@@ -81,30 +81,29 @@ jobs:
           - host: ubuntu-latest
             target: x86_64-unknown-linux-gnu
             docker: ghcr.io/napi-rs/napi-rs/nodejs-rust:lts-debian
-            build: cd napi && pnpm build --target x86_64-unknown-linux-gnu
+            build: pnpm build --target x86_64-unknown-linux-gnu
           - host: ubuntu-latest
             target: x86_64-unknown-linux-musl
             docker: ghcr.io/napi-rs/napi-rs/nodejs-rust:lts-alpine
-            build: cd napi && pnpm build --target x86_64-unknown-linux-musl -x
+            build: pnpm build --target x86_64-unknown-linux-musl -x
           - host: macos-latest
             target: aarch64-apple-darwin
             build: pnpm build --target aarch64-apple-darwin
           - host: ubuntu-latest
             target: aarch64-unknown-linux-gnu
             docker: ghcr.io/napi-rs/napi-rs/nodejs-rust:lts-debian-aarch64
-            build: cd napi && pnpm build --target aarch64-unknown-linux-gnu
+            build: pnpm build --target aarch64-unknown-linux-gnu
           - host: ubuntu-latest
             target: armv7-unknown-linux-gnueabihf
             setup: |
               sudo apt-get update
               sudo apt-get install gcc-arm-linux-gnueabihf -y
-            build: pnpm build --target armv7-unknown-linux-gnueabihf
+            build: CXXFLAGS="-stdlib=libc++ -L/usr/lib/llvm-18/lib -static" pnpm build --target armv7-unknown-linux-gnueabihf
           - host: ubuntu-latest
             target: aarch64-unknown-linux-musl
             docker: ghcr.io/napi-rs/napi-rs/nodejs-rust:lts-alpine
             build: |-
               set -e &&
-              cd napi &&
               rustup target add aarch64-unknown-linux-musl &&
               pnpm build --target aarch64-unknown-linux-musl
           - host: windows-latest
@@ -177,6 +176,9 @@ jobs:
           if-no-files-found: error
   build-freebsd:
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: "napi"
 
     name: Build FreeBSD
     steps:
