@@ -1,4 +1,6 @@
-use fetch_docs::StdDocs;
+use std::path::PathBuf;
+
+use fetch_docs::OnlineDocs;
 use serde::{Deserialize, Serialize};
 
 mod fetch_docs;
@@ -65,7 +67,7 @@ impl LLMsStandardConfig {
     lib_name: &str,
     version: Option<String>,
   ) -> Result<LLMsStandardStringConfig, Box<dyn std::error::Error>> {
-    if let Ok(docs) = StdDocs::fetch_docs(lib_name, version.clone()).await {
+    if let Ok(docs) = OnlineDocs::fetch_docs(lib_name, version.clone()).await {
       let version = version.unwrap_or(docs.crate_version);
       let mut config = LLMsStandardConfig::new(lib_name, &version);
       let base_url =
@@ -110,29 +112,6 @@ impl LLMsStandardConfig {
 #[cfg(test)]
 mod tests {
   use super::*;
-
-  #[tokio::test]
-  async fn test_fetch_docs() {
-    let version = "4.5.39".to_string();
-    let docs = StdDocs::fetch_docs("clap", Some(version.clone()))
-      .await
-      .unwrap();
-
-    assert_eq!(docs.crate_version, version);
-  }
-
-  #[tokio::test]
-  async fn test_fetch_docs_failed() {
-    let version = "0.53.3".to_string();
-
-    let result = StdDocs::fetch_docs("opendal", Some(version.clone()))
-      .await
-      .unwrap_err();
-
-    assert!(result
-      .to_string()
-      .contains("expected value at line 1 column 1"));
-  }
 
   #[tokio::test]
   async fn test_get_llms_config() {

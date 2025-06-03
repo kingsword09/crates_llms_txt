@@ -43,9 +43,9 @@ pub struct Module {
   pub is_stripped: bool,
 }
 
-pub struct StdDocs;
+pub struct OnlineDocs;
 
-impl StdDocs {
+impl OnlineDocs {
   /// Fetch the docs for a given crate and version.
   ///
   /// # Arguments
@@ -99,5 +99,33 @@ impl StdDocs {
     let json_data: DocsRoot = serde_json::from_slice(&decompressed_bytes)?;
 
     Ok(json_data)
+  }
+}
+
+#[cfg(test)]
+mod tests {
+  use crate::*;
+
+  #[tokio::test]
+  async fn test_fetch_docs() {
+    let version = "4.5.39".to_string();
+    let docs = OnlineDocs::fetch_docs("clap", Some(version.clone()))
+      .await
+      .unwrap();
+
+    assert_eq!(docs.crate_version, version);
+  }
+
+  #[tokio::test]
+  async fn test_fetch_docs_failed() {
+    let version = "0.53.3".to_string();
+
+    let result = OnlineDocs::fetch_docs("opendal", Some(version.clone()))
+      .await
+      .unwrap_err();
+
+    assert!(result
+      .to_string()
+      .contains("expected value at line 1 column 1"));
   }
 }
