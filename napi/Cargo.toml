@@ -1,0 +1,22 @@
+[package]
+authors = ["Kingsword kingsword09 <kingsword09@gmail.com>"]
+edition = "2021"
+name = "crates_llms_txt_napi"
+version = "0.0.1"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[lib]
+crate-type = ["cdylib"]
+
+[dependencies]
+napi = { version = "3.0.0-alpha", features = ["async"] }
+napi-derive = "3.0.0-alpha"
+crates_llms_txt = { path = "../rs-lib", features = ["rustdoc"] }
+
+[build-dependencies]
+napi-build = "2"
+
+[profile.release]
+lto = true
+codegen-units = 1

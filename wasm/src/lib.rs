@@ -103,7 +103,7 @@ pub async fn get_llms_config_online(
 /// let config = get_llms_config_by_rustdoc_all_features("stable", "Cargo.toml").await;
 /// ```
 #[wasm_bindgen]
-pub async fn get_llms_config_by_rustdoc_all_features(
+pub fn get_llms_config_by_rustdoc_all_features(
   toolchain: &str,
   manifest_path: &str,
 ) -> Result<JsValue, JsValue> {
@@ -111,9 +111,7 @@ pub async fn get_llms_config_by_rustdoc_all_features(
   match LLMsStandardConfig::get_llms_config_offline_with_all_features(
     toolchain,
     manifest_path,
-  )
-  .await
-  {
+  ) {
     Ok(config) => match llms_config_to_js_object(config) {
       Ok(obj) => Ok(obj.into()),
       Err(_) => Ok(JsValue::undefined()),
@@ -159,9 +157,7 @@ pub async fn get_llms_config_by_rustdoc_features(
     manifest_path,
     no_default_features,
     features,
-  )
-  .await
-  {
+  ) {
     Ok(config) => match llms_config_to_js_object(config) {
       Ok(obj) => Ok(obj.into()),
       Err(_) => Ok(JsValue::undefined()),

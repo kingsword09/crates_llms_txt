@@ -4,7 +4,7 @@
 // deno-fmt-ignore-file
 // @ts-self-types="./crates_llms_txt.d.ts"
 
-// source-hash: c310f24b6bc1399a2b2c735587444f0ea8a31fd0
+// source-hash: 6741b6763a26ae857ea4eb8169539f49fec4ae02
 import * as wasm from "./crates_llms_txt.wasm";
 export * from "./crates_llms_txt.internal.js";
 import { __wbg_set_wasm } from "./crates_llms_txt.internal.js";

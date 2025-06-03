@@ -1,0 +1,118 @@
+{
+  "name": "crates-llms-txt-napi",
+  "version": "0.0.1",
+  "description": "A repository for generating content for llms.txt and llms-full.txt files used by Rust libraries.",
+  "main": "index.js",
+  "module": "index.js",
+  "types": "index.d.ts",
+  "homepage": "https://github.com/kingsword09/crates_llms_txt#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kingsword09/crates_llms_txt.git"
+  },
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/kingsword09/crates_llms_txt/issues"
+  },
+  "keywords": [
+    "napi-rs",
+    "NAPI",
+    "N-API",
+    "Rust",
+    "node-addon",
+    "node-addon-api"
+  ],
+  "files": [
+    "index.d.ts",
+    "index.js"
+  ],
+  "napi": {
+    "binaryName": "crates-llms-txt",
+    "targets": [
+      "x86_64-apple-darwin",
+      "aarch64-apple-darwin",
+      "x86_64-unknown-linux-gnu",
+      "x86_64-pc-windows-msvc",
+      "x86_64-unknown-linux-musl",
+      "aarch64-unknown-linux-gnu",
+      "i686-pc-windows-msvc",
+      "armv7-unknown-linux-gnueabihf",
+      "x86_64-unknown-freebsd",
+      "aarch64-unknown-linux-musl",
+      "aarch64-pc-windows-msvc"
+    ],
+    "packageName": "crates-llms-txt-napi"
+  },
+  "engines": {
+    "node": ">= 20"
+  },
+  "publishConfig": {
+    "registry": "https://registry.npmjs.org/",
+    "access": "public"
+  },
+  "scripts": {
+    "artifacts": "napi artifacts",
+    "build": "napi build --platform --release",
+    "build:debug": "napi build --platform",
+    "format": "run-p format:prettier format:rs format:toml",
+    "format:prettier": "prettier . -w",
+    "format:toml": "taplo format",
+    "format:rs": "cargo fmt",
+    "lint": "oxlint",
+    "prepublishOnly": "napi prepublish -t npm",
+    "test": "ava",
+    "version": "napi version"
+  },
+  "devDependencies": {
+    "@emnapi/core": "^1.4.3",
+    "@emnapi/runtime": "^1.4.3",
+    "@napi-rs/cli": "3.0.0-alpha.84",
+    "@napi-rs/wasm-runtime": "^0.2.10",
+    "@oxc-node/core": "^0.0.27",
+    "@taplo/cli": "^0.7.0",
+    "@tybys/wasm-util": "^0.9.0",
+    "@types/node": "^22.15.29",
+    "ava": "^6.3.0",
+    "chalk": "^5.4.1",
+    "emnapi": "^1.4.3",
+    "husky": "^9.1.7",
+    "lint-staged": "^16.1.0",
+    "npm-run-all2": "^8.0.4",
+    "oxlint": "^0.17.0",
+    "prettier": "^3.5.3",
+    "typescript": "^5.8.3"
+  },
+  "lint-staged": {
+    "*.@(js|ts|tsx)": [
+      "oxlint --fix"
+    ],
+    "*.@(js|ts|tsx|yml|yaml|md|json)": [
+      "prettier --write"
+    ],
+    "*.toml": [
+      "taplo format"
+    ]
+  },
+  "ava": {
+    "extensions": {
+      "ts": "module"
+    },
+    "timeout": "2m",
+    "workerThreads": false,
+    "environmentVariables": {
+      "TS_NODE_PROJECT": "./tsconfig.json"
+    },
+    "nodeArguments": [
+      "--import",
+      "@oxc-node/core/register"
+    ]
+  },
+  "prettier": {
+    "printWidth": 120,
+    "semi": false,
+    "trailingComma": "all",
+    "singleQuote": true,
+    "arrowParens": "always"
+  },
+  "packageManager": "pnpm@10.11.1"
+}

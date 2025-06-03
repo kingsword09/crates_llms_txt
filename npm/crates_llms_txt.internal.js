@@ -264,6 +264,11 @@ export function get_llms_config_online(lib_name, version) {
   return ret;
 }
 
+function takeFromExternrefTable0(idx) {
+  const value = wasm.__wbindgen_export_2.get(idx);
+  wasm.__externref_table_dealloc(idx);
+  return value;
+}
 /**
  * Get the LLM config by generating rustdoc with all features enabled.
  *
@@ -288,7 +293,7 @@ export function get_llms_config_online(lib_name, version) {
  * ```
  * @param {string} toolchain
  * @param {string} manifest_path
- * @returns {Promise<any>}
+ * @returns {any}
  */
 export function get_llms_config_by_rustdoc_all_features(
   toolchain,
@@ -312,7 +317,10 @@ export function get_llms_config_by_rustdoc_all_features(
     ptr1,
     len1,
   );
-  return ret;
+  if (ret[2]) {
+    throw takeFromExternrefTable0(ret[1]);
+  }
+  return takeFromExternrefTable0(ret[0]);
 }
 
 function passArrayJsValueToWasm0(array, malloc) {
@@ -390,18 +398,18 @@ export function get_llms_config_by_rustdoc_features(
 
 function __wbg_adapter_28(arg0, arg1) {
   wasm
-    ._dyn_core__ops__function__FnMut_____Output___R_as_wasm_bindgen__closure__WasmClosure___describe__invoke__h44f61e8a396fd49b(
+    ._dyn_core__ops__function__FnMut_____Output___R_as_wasm_bindgen__closure__WasmClosure___describe__invoke__hb71e9ddd573429c2(
       arg0,
       arg1,
     );
 }
 
 function __wbg_adapter_31(arg0, arg1, arg2) {
-  wasm.closure336_externref_shim(arg0, arg1, arg2);
+  wasm.closure332_externref_shim(arg0, arg1, arg2);
 }
 
 function __wbg_adapter_111(arg0, arg1, arg2, arg3) {
-  wasm.closure362_externref_shim(arg0, arg1, arg2, arg3);
+  wasm.closure358_externref_shim(arg0, arg1, arg2, arg3);
 }
 
 const __wbindgen_enum_RequestCredentials = ["omit", "same-origin", "include"];
@@ -717,13 +725,13 @@ export function __wbindgen_cb_drop(arg0) {
   return ret;
 }
 
-export function __wbindgen_closure_wrapper2142(arg0, arg1, arg2) {
-  const ret = makeMutClosure(arg0, arg1, 297, __wbg_adapter_28);
+export function __wbindgen_closure_wrapper2116(arg0, arg1, arg2) {
+  const ret = makeMutClosure(arg0, arg1, 294, __wbg_adapter_28);
   return ret;
 }
 
-export function __wbindgen_closure_wrapper2282(arg0, arg1, arg2) {
-  const ret = makeMutClosure(arg0, arg1, 337, __wbg_adapter_31);
+export function __wbindgen_closure_wrapper2258(arg0, arg1, arg2) {
+  const ret = makeMutClosure(arg0, arg1, 333, __wbg_adapter_31);
   return ret;
 }
 

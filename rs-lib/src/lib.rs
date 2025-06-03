@@ -2,10 +2,12 @@ use fetch_docs::OnlineDocs;
 use rustdoc_types::Visibility;
 use serde::{Deserialize, Serialize};
 use std::path::PathBuf;
+use temp_trait::CommonCrates;
 
 mod fetch_docs;
 #[cfg(feature = "rustdoc")]
 mod gen_docs;
+mod temp_trait;
 
 const DOCS_BASE_URL: &'static str = "https://docs.rs/crate";
 
@@ -59,13 +61,12 @@ impl LLMsStandardConfig {
   ///
   /// * `Result<LLMsStandardConfig, Box<dyn std::error::Error>>` - The LLM config for the crate.
   ///
-  fn process_docs(
+  fn process_docs<T: CommonCrates>(
     lib_name: &str,
-    docs: rustdoc_types::Crate,
+    docs: T,
     version: Option<String>,
   ) -> Result<LLMsStandardStringConfig, Box<dyn std::error::Error>> {
-    let version =
-      version.unwrap_or(docs.crate_version.unwrap_or("latest".to_string()));
+    let version = version.unwrap_or(docs.crate_version());
     let mut config = LLMsStandardConfig::new(&lib_name, &version);
     let base_url =
       format!("{}/{}/{}/source", DOCS_BASE_URL, &lib_name, version);
@@ -76,7 +77,7 @@ impl LLMsStandardConfig {
       link: format!("https://docs.rs/{}/{}", lib_name, version),
     });
 
-    for (_, item) in docs.index {
+    for (_, item) in docs.index() {
       if let Some(docs) = item.docs {
         // Skip private and default items
         if item.visibility != Visibility::Public {
@@ -159,9 +160,9 @@ impl LLMsStandardConfig {
   /// ).await?;
   /// ```
   #[cfg(feature = "rustdoc")]
-  pub async fn get_llms_config_offline_with_all_features(
+  pub fn get_llms_config_offline_with_all_features(
     toolchain: &str,
-    manifest_path: PathBuf, //   ) -> Result<LLMsStandardStringConfig, Box<dyn std::error::Error>> {
+    manifest_path: PathBuf,
   ) -> Result<LLMsStandardStringConfig, Box<dyn std::error::Error>> {
     if let Ok(gen_docs_struct) =
       gen_docs::gen_docs_with_all_features(toolchain, manifest_path)
@@ -198,7 +199,7 @@ impl LLMsStandardConfig {
   /// ).await?;
   /// ```
   #[cfg(feature = "rustdoc")]
-  pub async fn get_llms_config_offline_with_features(
+  pub fn get_llms_config_offline_with_features(
     toolchain: &str,
     manifest_path: PathBuf,
     no_default_features: bool,
@@ -236,5 +237,19 @@ mod tests {
 
     assert_eq!(config.lib_name, lib_name);
     assert_eq!(config.version, version);
+  }
+
+  #[cfg(feature = "rustdoc")]
+  #[test]
+  fn test_get_llms_config_offline_with_all_features() {
+    let lib_name = "crates_llms_txt";
+    let current_dir = std::env::current_dir().unwrap();
+    let config = LLMsStandardConfig::get_llms_config_offline_with_all_features(
+      "stable",
+      current_dir.join("Cargo.toml"),
+    )
+    .unwrap();
+    println!("{:?}", config);
+    assert_eq!(config.lib_name, lib_name);
   }
 }

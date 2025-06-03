@@ -50,7 +50,7 @@ export function get_llms_config_online(
 export function get_llms_config_by_rustdoc_all_features(
   toolchain: string,
   manifest_path: string,
-): Promise<any>;
+): any;
 /**
  * Get the LLM config by generating rustdoc with specified features enabled.
  *
