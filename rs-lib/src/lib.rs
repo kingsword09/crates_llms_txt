@@ -2,6 +2,7 @@ use fetch_docs::OnlineDocs;
 use serde::{Deserialize, Serialize};
 
 mod fetch_docs;
+mod gen_docs;
 
 const DOCS_BASE_URL: &'static str = "https://docs.rs/crate";
 
@@ -107,6 +108,16 @@ impl LLMsStandardConfig {
     }
 
     Err("Failed to get llms config".into())
+  }
+
+  pub async fn get_llms_config_offline_with_all_features(
+    toolchain: &str,
+    manifest_path: PathBuf, //   ) -> Result<LLMsStandardStringConfig, Box<dyn std::error::Error>> {
+  ) -> Result<(), Box<dyn std::error::Error>> {
+    let json_path =
+      gen_docs::gen_docs_with_all_features(toolchain, manifest_path)?;
+    println!("{:?}", json_path);
+    Ok(())
   }
 }
 
