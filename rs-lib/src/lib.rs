@@ -3,6 +3,7 @@ use serde::{Deserialize, Serialize};
 use std::path::PathBuf;
 
 mod fetch_docs;
+#[cfg(feature = "rustdoc")]
 mod gen_docs;
 
 const DOCS_BASE_URL: &'static str = "https://docs.rs/crate";
