@@ -18,8 +18,8 @@ impl OnlineDocs {
   ///
   /// # Examples
   ///
-  /// ```
-  /// let docs = StdDocs::fetch_docs("clap", Some("4.5.39")).await.unwrap();
+  /// ```no_run
+  /// let docs = OnlineDocs::fetch_docs("clap", Some("4.5.39")).await.unwrap();
   /// ```
   ///
   pub async fn fetch_docs(

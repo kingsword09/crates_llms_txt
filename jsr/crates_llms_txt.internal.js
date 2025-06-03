@@ -264,20 +264,144 @@ export function get_llms_config_online(lib_name, version) {
   return ret;
 }
 
-function __wbg_adapter_26(arg0, arg1) {
+/**
+ * Get the LLM config by generating rustdoc with all features enabled.
+ *
+ * This function takes a toolchain and a manifest path, generates rustdoc JSON
+ * for the specified crate with all features enabled, and returns the LLM config
+ * as a JavaScript object.
+ *
+ * # Arguments
+ *
+ * * `toolchain` - The Rust toolchain to use (e.g., "stable", "nightly").
+ * * `manifest_path` - The path to the Cargo.toml file of the crate.
+ *
+ * # Returns
+ *
+ * * `Result<JsValue, JsValue>` - A JavaScript object representing the LLM config
+ *   on success, or `JsValue::undefined()` on failure.
+ *
+ * # Examples
+ *
+ * ```no_run
+ * let config = get_llms_config_by_rustdoc_all_features("stable", "Cargo.toml").await;
+ * ```
+ * @param {string} toolchain
+ * @param {string} manifest_path
+ * @returns {Promise<any>}
+ */
+export function get_llms_config_by_rustdoc_all_features(
+  toolchain,
+  manifest_path,
+) {
+  const ptr0 = passStringToWasm0(
+    toolchain,
+    wasm.__wbindgen_malloc,
+    wasm.__wbindgen_realloc,
+  );
+  const len0 = WASM_VECTOR_LEN;
+  const ptr1 = passStringToWasm0(
+    manifest_path,
+    wasm.__wbindgen_malloc,
+    wasm.__wbindgen_realloc,
+  );
+  const len1 = WASM_VECTOR_LEN;
+  const ret = wasm.get_llms_config_by_rustdoc_all_features(
+    ptr0,
+    len0,
+    ptr1,
+    len1,
+  );
+  return ret;
+}
+
+function passArrayJsValueToWasm0(array, malloc) {
+  const ptr = malloc(array.length * 4, 4) >>> 0;
+  for (let i = 0; i < array.length; i++) {
+    const add = addToExternrefTable0(array[i]);
+    getDataViewMemory0().setUint32(ptr + 4 * i, add, true);
+  }
+  WASM_VECTOR_LEN = array.length;
+  return ptr;
+}
+/**
+ * Get the LLM config by generating rustdoc with specified features enabled.
+ *
+ * This function takes a toolchain, manifest path, and a list of features,
+ * generates rustdoc JSON for the specified crate with the specified features
+ * enabled, and returns the LLM config as a JavaScript object.
+ *
+ * # Arguments
+ *
+ * * `toolchain` - The Rust toolchain to use (e.g., "stable", "nightly").
+ * * `manifest_path` - The path to the Cargo.toml file of the crate.
+ * * `no_default_features` - Whether to include the default features.
+ * * `features` - The features to include.
+ *
+ * # Returns
+ *
+ * * `Result<JsValue, JsValue>` - A JavaScript object representing the LLM config
+ *   on success, or `JsValue::undefined()` on failure.
+ *
+ * # Examples
+ *
+ * ```no_run
+ * let config = get_llms_config_by_rustdoc_features("stable", "Cargo.toml", true, vec!["async".to_string()]).await;
+ * ```
+ * @param {string} toolchain
+ * @param {string} manifest_path
+ * @param {boolean} no_default_features
+ * @param {string[] | null} [features]
+ * @returns {Promise<any>}
+ */
+export function get_llms_config_by_rustdoc_features(
+  toolchain,
+  manifest_path,
+  no_default_features,
+  features,
+) {
+  const ptr0 = passStringToWasm0(
+    toolchain,
+    wasm.__wbindgen_malloc,
+    wasm.__wbindgen_realloc,
+  );
+  const len0 = WASM_VECTOR_LEN;
+  const ptr1 = passStringToWasm0(
+    manifest_path,
+    wasm.__wbindgen_malloc,
+    wasm.__wbindgen_realloc,
+  );
+  const len1 = WASM_VECTOR_LEN;
+  var ptr2 = isLikeNone(features)
+    ? 0
+    : passArrayJsValueToWasm0(features, wasm.__wbindgen_malloc);
+  var len2 = WASM_VECTOR_LEN;
+  const ret = wasm.get_llms_config_by_rustdoc_features(
+    ptr0,
+    len0,
+    ptr1,
+    len1,
+    no_default_features,
+    ptr2,
+    len2,
+  );
+  return ret;
+}
+
+function __wbg_adapter_28(arg0, arg1) {
   wasm
-    ._dyn_core__ops__function__FnMut_____Output___R_as_wasm_bindgen__closure__WasmClosure___describe__invoke__hcc14b12a0011985a(
+    ._dyn_core__ops__function__FnMut_____Output___R_as_wasm_bindgen__closure__WasmClosure___describe__invoke__h44f61e8a396fd49b(
       arg0,
       arg1,
     );
 }
 
-function __wbg_adapter_29(arg0, arg1, arg2) {
-  wasm.closure221_externref_shim(arg0, arg1, arg2);
+function __wbg_adapter_31(arg0, arg1, arg2) {
+  wasm.closure336_externref_shim(arg0, arg1, arg2);
 }
 
-function __wbg_adapter_107(arg0, arg1, arg2, arg3) {
-  wasm.closure247_externref_shim(arg0, arg1, arg2, arg3);
+function __wbg_adapter_111(arg0, arg1, arg2, arg3) {
+  wasm.closure362_externref_shim(arg0, arg1, arg2, arg3);
 }
 
 const __wbindgen_enum_RequestCredentials = ["omit", "same-origin", "include"];
@@ -403,7 +527,7 @@ export function __wbg_new_23a2665fac83c611(arg0, arg1) {
       const a = state0.a;
       state0.a = 0;
       try {
-        return __wbg_adapter_107(a, state0.b, arg0, arg1);
+        return __wbg_adapter_111(a, state0.b, arg0, arg1);
       } finally {
         state0.a = a;
       }
@@ -593,13 +717,13 @@ export function __wbindgen_cb_drop(arg0) {
   return ret;
 }
 
-export function __wbindgen_closure_wrapper1614(arg0, arg1, arg2) {
-  const ret = makeMutClosure(arg0, arg1, 185, __wbg_adapter_26);
+export function __wbindgen_closure_wrapper2142(arg0, arg1, arg2) {
+  const ret = makeMutClosure(arg0, arg1, 297, __wbg_adapter_28);
   return ret;
 }
 
-export function __wbindgen_closure_wrapper1753(arg0, arg1, arg2) {
-  const ret = makeMutClosure(arg0, arg1, 222, __wbg_adapter_29);
+export function __wbindgen_closure_wrapper2282(arg0, arg1, arg2) {
+  const ret = makeMutClosure(arg0, arg1, 337, __wbg_adapter_31);
   return ret;
 }
 
@@ -613,6 +737,11 @@ export function __wbindgen_debug_string(arg0, arg1) {
   const len1 = WASM_VECTOR_LEN;
   getDataViewMemory0().setInt32(arg0 + 4 * 1, len1, true);
   getDataViewMemory0().setInt32(arg0 + 4 * 0, ptr1, true);
+}
+
+export function __wbindgen_error_new(arg0, arg1) {
+  const ret = new Error(getStringFromWasm0(arg0, arg1));
+  return ret;
 }
 
 export function __wbindgen_init_externref_table() {

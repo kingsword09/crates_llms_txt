@@ -1,7 +1,9 @@
 use fetch_docs::OnlineDocs;
 use serde::{Deserialize, Serialize};
+use std::path::PathBuf;
 
 mod fetch_docs;
+mod gen_docs;
 
 const DOCS_BASE_URL: &'static str = "https://docs.rs/crate";
 
@@ -55,6 +57,64 @@ impl LLMsStandardConfig {
   ///
   /// * `Result<LLMsStandardConfig, Box<dyn std::error::Error>>` - The LLM config for the crate.
   ///
+  fn process_docs(
+    lib_name: &str,
+    docs: rustdoc_types::Crate,
+    version: Option<String>,
+  ) -> Result<LLMsStandardStringConfig, Box<dyn std::error::Error>> {
+    let version =
+      version.unwrap_or(docs.crate_version.unwrap_or("latest".to_string()));
+    let mut config = LLMsStandardConfig::new(&lib_name, &version);
+    let base_url =
+      format!("{}/{}/{}/source", DOCS_BASE_URL, &lib_name, version);
+
+    config.sessions.push(SessionItem {
+      title: lib_name.to_string(),
+      description: "".to_string(),
+      link: format!("https://docs.rs/{}/{}", lib_name, version),
+    });
+
+    for (_, item) in docs.index {
+      if let Some(docs) = item.docs {
+        let filename = item.span.unwrap().filename;
+        let link = format!("{}/{}", base_url, filename.to_str().unwrap());
+
+        config.sessions.push(SessionItem {
+          title: match item.name {
+            Some(name) => name,
+            None => filename.to_str().unwrap().to_string(),
+          },
+          description: "".to_string(),
+          link: link.clone(),
+        });
+        config.full_sessions.push(FullSessionItem {
+          content: docs,
+          link,
+        });
+      };
+    }
+
+    return Ok(LLMsStandardStringConfig {
+      lib_name: config.lib_name,
+      version: config.version,
+      sessions: serde_json::to_string(&config.sessions)
+        .unwrap_or("".to_string()),
+      full_sessions: serde_json::to_string(&config.full_sessions)
+        .unwrap_or("".to_string()),
+    });
+  }
+
+  /// Get the LLM config for a given crate and version.
+  ///
+  /// # Arguments
+  ///
+  /// * `lib_name` - The name of the crate.
+  /// * `version` - The version of the crate. If None, the latest version will be used.
+  ///
+  /// # Returns
+  ///
+  /// * `Result<LLMsStandardConfig, Box<dyn std::error::Error>>` - The LLM config for the crate.
+  ///
   /// # Examples
   ///
   /// ```
@@ -66,44 +126,86 @@ impl LLMsStandardConfig {
     version: Option<String>,
   ) -> Result<LLMsStandardStringConfig, Box<dyn std::error::Error>> {
     if let Ok(docs) = OnlineDocs::fetch_docs(lib_name, version.clone()).await {
-      let version =
-        version.unwrap_or(docs.crate_version.unwrap_or("latest".to_string()));
-      let mut config = LLMsStandardConfig::new(lib_name, &version);
-      let base_url =
-        format!("{}/{}/{}/source", DOCS_BASE_URL, lib_name, version);
-      config.sessions.push(SessionItem {
-        title: lib_name.to_string(),
-        description: "".to_string(),
-        link: format!("https://docs.rs/{}/{}", lib_name, version),
-      });
-      for (_, item) in docs.index {
-        if let Some(docs) = item.docs {
-          let filename = item.span.unwrap().filename;
-          let link = format!("{}/{}", base_url, filename.to_str().unwrap());
+      return LLMsStandardConfig::process_docs(lib_name, docs, version);
+    }
 
-          config.sessions.push(SessionItem {
-            title: match item.name {
-              Some(name) => name,
-              None => filename.to_str().unwrap().to_string(),
-            },
-            description: "".to_string(),
-            link: link.clone(),
-          });
-          config.full_sessions.push(FullSessionItem {
-            content: docs,
-            link,
-          });
-        }
-      }
+    Err("Failed to get llms config".into())
+  }
 
-      return Ok(LLMsStandardStringConfig {
-        lib_name: config.lib_name,
-        version: config.version,
-        sessions: serde_json::to_string(&config.sessions)
-          .unwrap_or("".to_string()),
-        full_sessions: serde_json::to_string(&config.full_sessions)
-          .unwrap_or("".to_string()),
-      });
+  /// Generate documentation for a crate using offline mode with all features enabled.
+  ///
+  /// # Arguments
+  ///
+  /// * `toolchain` - The Rust toolchain to use (e.g. "stable", "nightly")
+  /// * `manifest_path` - Path to the Cargo.toml file of the crate
+  ///
+  /// # Returns
+  ///
+  /// * `Result<LLMsStandardStringConfig, Box<dyn std::error::Error>>` - The generated documentation config
+  ///
+  /// # Examples
+  ///
+  /// ```no_run
+  /// let config = LLMsStandardConfig::get_llms_config_offline_with_all_features(
+  ///     "stable",
+  ///     PathBuf::from("path/to/Cargo.toml")
+  /// ).await?;
+  /// ```
+  #[cfg(feature = "rustdoc")]
+  pub async fn get_llms_config_offline_with_all_features(
+    toolchain: &str,
+    manifest_path: PathBuf, //   ) -> Result<LLMsStandardStringConfig, Box<dyn std::error::Error>> {
+  ) -> Result<LLMsStandardStringConfig, Box<dyn std::error::Error>> {
+    if let Ok(gen_docs_struct) =
+      gen_docs::gen_docs_with_all_features(toolchain, manifest_path)
+    {
+      let lib_name = gen_docs_struct.lib_name;
+      let docs = gen_docs_struct.docs;
+      return LLMsStandardConfig::process_docs(&lib_name, docs, None);
+    }
+
+    Err("Failed to get llms config".into())
+  }
+
+  /// Generate documentation for a crate using offline mode with specified features enabled.
+  ///
+  /// # Arguments
+  ///
+  /// * `toolchain` - The Rust toolchain to use (e.g. "stable", "nightly")
+  /// * `manifest_path` - Path to the Cargo.toml file of the crate
+  /// * `no_default_features` - Whether to disable the default features
+  /// * `features` - List of features to enable
+  ///
+  /// # Returns
+  ///
+  /// * `Result<LLMsStandardStringConfig, Box<dyn std::error::Error>>` - The generated documentation config
+  ///
+  /// # Examples
+  ///
+  /// ```no_run
+  /// let config = LLMsStandardConfig::get_llms_config_offline_with_features(
+  ///     "stable",
+  ///     PathBuf::from("path/to/Cargo.toml"),
+  ///     false,
+  ///     Some(vec!["async".to_string()])
+  /// ).await?;
+  /// ```
+  #[cfg(feature = "rustdoc")]
+  pub async fn get_llms_config_offline_with_features(
+    toolchain: &str,
+    manifest_path: PathBuf,
+    no_default_features: bool,
+    features: Option<Vec<String>>,
+  ) -> Result<LLMsStandardStringConfig, Box<dyn std::error::Error>> {
+    if let Ok(gen_docs_struct) = gen_docs::gen_docs_with_features(
+      toolchain,
+      manifest_path,
+      no_default_features,
+      features,
+    ) {
+      let lib_name = gen_docs_struct.lib_name;
+      let docs = gen_docs_struct.docs;
+      return LLMsStandardConfig::process_docs(&lib_name, docs, None);
     }
 
     Err("Failed to get llms config".into())
