@@ -2,6 +2,7 @@ import { build } from "jsr:@deno/dnt@^0.42.1";
 import denoJson from "./deno.json" with { type: "json" };
 
 if (import.meta.main) {
+  await Deno.copyFile("../jsr/mod.ts", "./mod.ts");
   await build({
     entryPoints: ["./mod.ts"],
     outDir: ".npm",
