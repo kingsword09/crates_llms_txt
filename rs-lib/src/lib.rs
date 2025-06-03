@@ -1,5 +1,3 @@
-use std::path::PathBuf;
-
 use fetch_docs::OnlineDocs;
 use serde::{Deserialize, Serialize};
 
@@ -68,7 +66,8 @@ impl LLMsStandardConfig {
     version: Option<String>,
   ) -> Result<LLMsStandardStringConfig, Box<dyn std::error::Error>> {
     if let Ok(docs) = OnlineDocs::fetch_docs(lib_name, version.clone()).await {
-      let version = version.unwrap_or(docs.crate_version);
+      let version =
+        version.unwrap_or(docs.crate_version.unwrap_or("latest".to_string()));
       let mut config = LLMsStandardConfig::new(lib_name, &version);
       let base_url =
         format!("{}/{}/{}/source", DOCS_BASE_URL, lib_name, version);
@@ -79,11 +78,13 @@ impl LLMsStandardConfig {
       });
       for (_, item) in docs.index {
         if let Some(docs) = item.docs {
-          let link = format!("{}/{}", base_url, item.span.filename);
+          let filename = item.span.unwrap().filename;
+          let link = format!("{}/{}", base_url, filename.to_str().unwrap());
+
           config.sessions.push(SessionItem {
             title: match item.name {
               Some(name) => name,
-              None => item.span.filename,
+              None => filename.to_str().unwrap().to_string(),
             },
             description: "".to_string(),
             link: link.clone(),

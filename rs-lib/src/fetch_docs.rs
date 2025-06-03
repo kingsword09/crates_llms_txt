@@ -1,47 +1,6 @@
 use reqwest::header;
-use serde::{Deserialize, Serialize};
-use std::collections::HashMap;
 
 const DOCS_BASE_URL: &'static str = "https://docs.rs/crate";
-
-#[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct DocsRoot {
-  pub crate_version: String,
-  pub index: HashMap<String, IndexItem>,
-}
-
-#[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct IndexItem {
-  // pub id: u32,
-  // pub crate_id: u32,
-  pub name: Option<String>,
-  pub span: Span,
-  // pub visibility: String,
-  pub docs: Option<String>,
-  // pub links: HashMap<String, String>,
-  // pub attrs: Vec<String>,
-  // pub deprecation: Option<String>,
-  // pub inner: Inner,
-}
-
-#[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct Span {
-  pub filename: String,
-  pub begin: Vec<u32>,
-  pub end: Vec<u32>,
-}
-
-#[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct Inner {
-  pub module: Module,
-}
-
-#[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct Module {
-  pub is_crate: bool,
-  pub items: Vec<String>,
-  pub is_stripped: bool,
-}
 
 pub struct OnlineDocs;
 
@@ -66,7 +25,7 @@ impl OnlineDocs {
   pub async fn fetch_docs(
     lib_name: &str,
     version: Option<String>,
-  ) -> Result<DocsRoot, Box<dyn std::error::Error>> {
+  ) -> Result<rustdoc_types::Crate, Box<dyn std::error::Error>> {
     let client = reqwest::Client::builder().build().unwrap();
     let version = version.unwrap_or("latest".to_string());
     let url = format!("{}/{}/{}/json", DOCS_BASE_URL, lib_name, version);
@@ -96,7 +55,8 @@ impl OnlineDocs {
     }
 
     // Now, parse the (potentially decompressed) bytes as JSON
-    let json_data: DocsRoot = serde_json::from_slice(&decompressed_bytes)?;
+    let json_data: rustdoc_types::Crate =
+      serde_json::from_slice(&decompressed_bytes)?;
 
     Ok(json_data)
   }
@@ -113,7 +73,7 @@ mod tests {
       .await
       .unwrap();
 
-    assert_eq!(docs.crate_version, version);
+    assert_eq!(docs.crate_version.unwrap(), version);
   }
 
   #[tokio::test]
