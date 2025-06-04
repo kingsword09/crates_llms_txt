@@ -1,5 +1,7 @@
 # crates_llms_txt JS/TS Library
 
+<a :href="`https://www.npmjs.com/package/crates-llms-txt-napi`" target="_blank"><img src="https://img.shields.io/npm/v/crates-llms-txt-napi?label=npm" alt="NPM version"></a>
+
 This library provides a standard interface to fetch and parse Rust crate documentation and session data for use with LLMs (Large Language Models).
 
 ## Features

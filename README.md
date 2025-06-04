@@ -1,6 +1,26 @@
 # crates_llms_txt
 
+[![Crates.io][crates-badge]][crates-url] <a :href="`https://www.npmjs.com/package/crates-llms-txt-napi`" target="_blank"><img src="https://img.shields.io/npm/v/crates-llms-txt-napi?label=npm" alt="NPM version"></a>
+
+[crates-badge]: https://img.shields.io/crates/v/crates_llms_txt
+[crates-url]: https://crates.io/crates/crates_llms_txt
+
 A repository for generating content for llms.txt and llms-full.txt files used by Rust libraries.
+
+## Package Distribution
+
+This repository provides two distribution formats:
+
+### Rust Crates: [crates_llms_txt](https://crates.io/crates/crates_llms_txt)
+
+- Published on crates.io
+- Native Rust implementation
+- Cargo package management
+
+### npm Packages: [crates-llms-txt-napi](https://www.npmjs.com/package/crates-llms-txt-napi)
+
+- Published on npm
+- JavaScript/TypeScript implementation
 
 ## Purpose
 
