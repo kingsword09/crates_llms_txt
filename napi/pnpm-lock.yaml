@@ -5,7 +5,7 @@ settings:
   excludeLinksFromLockfile: false
 
 patchedDependencies:
-  '@napi-rs/cli@3.0.0-alpha.84':
+  '@napi-rs/cli':
     hash: 3178b735242e461cd34b5fef11f8c5488b90f3cb78b5d12801a51e4c001f1299
     path: patches/@napi-rs__cli@3.0.0-alpha.84.patch
 
