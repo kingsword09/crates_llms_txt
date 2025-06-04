@@ -5,6 +5,7 @@
   "main": "index.js",
   "module": "index.js",
   "types": "index.d.ts",
+  "author": "Kingsword kingsword09 <kingsword09@gmail.com>",
   "homepage": "https://github.com/kingsword09/crates_llms_txt#readme",
   "repository": {
     "type": "git",
