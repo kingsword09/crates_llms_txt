@@ -5,57 +5,129 @@
 [![npm downloads][npm-downloads-src]][npm-downloads-href]
 [![License][license-src]][license-href]
 
-A repository for generating content for llms.txt and llms-full.txt files used by Rust libraries.
+A repository for generating content for `llms.txt` and `llms-full.txt` files used by Rust libraries.
 
 ## Package Distribution
 
 This repository provides two distribution formats:
 
-### Rust Crates: [crates_llms_txt](https://crates.io/crates/crates_llms_txt)
+### Rust Library: `crates_llms_txt`
 
-- Published on crates.io
-- Native Rust implementation
-- Cargo package management
+The `crates_llms_txt` library is the native Rust implementation.
 
-### npm Packages: [crates-llms-txt-napi](https://www.npmjs.com/package/crates-llms-txt-napi)
+- **Crates.io:** [crates_llms_txt](https://crates.io/crates/crates_llms_txt)
+- **Source:** `rs-lib/`
 
-- Published on npm
-- JavaScript/TypeScript implementation
+**Description:** An asynchronous Rust library for retrieving Rust crates documentation structure and LLM configurations.
 
-## Purpose
+**Features:**
 
-This repository contains the necessary content to generate:
+- Asynchronously fetch crates documentation index.
+- Parse documentation structure into Rust structs.
+- Generate standard LLM configurations, including sessions and full_sessions.
 
-- `llms.txt`: A concise list of LLM-related Rust crates
-- `llms-full.txt`: Detailed information about LLM-related Rust crates including descriptions, features, and usage
+**Usage:**
 
-## Content Structure
+To use `crates_llms_txt` in your Rust project, add it as a dependency to your `Cargo.toml`:
 
-The generated files include:
+```toml
+[dependencies]
+crates_llms_txt = "0.1.0" # Replace with the latest version
+```
 
-- Core LLM libraries and bindings
-- Model implementations
-- Tokenizers and text processing
-- Inference engines
-- Training utilities
-- Integration helpers
+Then, you can use its functions in your Rust code. For example, to fetch documentation (conceptual):
 
-## Usage
+```rust
+use crates_llms_txt::get_llms_config_online;
 
-1. Clone this repository
-2. Run the generation script
-3. Find the generated files in the output directory
+async fn main() {
+    match get_llms_config_online("clap", Some("4.5.39")).await {
+        Ok(data) => {
+            // Process data
+            println!("Successfully fetched data.");
+        }
+        Err(e) => {
+            eprintln!("Error: {}", e);
+        }
+    }
+}
+```
 
-## Contributing
+For detailed API usage, please refer to the documentation within the `rs-lib` directory or on [crates.io](https://crates.io/crates/crates_llms_txt).
 
-Feel free to contribute by:
+### NAPI Package: `crates-llms-txt-napi`
 
-- Adding new LLM-related crates
-- Updating crate information
-- Improving descriptions
-- Fixing errors
+The `crates-llms-txt-napi` library is the JS/TS implementation, distributed via npm.
 
-Please submit a PR with your changes.
+- **NPM Package:** [crates-llms-txt-napi](https://www.npmjs.com/package/crates-llms-txt-napi)
+- **Source:** `napi/`
+
+**Description:** This library provides a standard interface to fetch and parse Rust crate documentation and session data for use with LLMs (Large Language Models).
+
+**Features:**
+
+- Fetches documentation and session data for any Rust crate by name and version.
+- Returns a unified configuration object for LLM consumption.
+- TypeScript type definitions included.
+
+**Installation:**
+
+```bash
+npm install crates-llms-txt-napi
+```
+
+**Usage Example:**
+
+```typescript
+import { getLlmsConfigOnline } from "crates-llms-txt-napi";
+
+async function main() {
+  const config = await getLlmsConfigOnline("clap", "4.5.39");
+}
+
+main();
+```
+
+**API:**
+
+#### `getLlmsConfigOnline(libName: string, version?: string): Promise<LlMsConfig>`
+
+Fetches the standard configuration for a given Rust crate and version.
+
+- `libName: string`: The name of the crate (e.g., "clap").
+- `version?: string`: The version string (optional, defaults to the latest version of the crate).
+- **Returns:** `Promise<LlMsConfig>` - A promise that resolves to the LlMsConfig object.
+
+**`LlMsConfig` Type:**
+
+```typescript
+type SessionItem = { title: string; description: string; link: string };
+type FullSessionItem = { content: string; link: string };
+
+export type LlMsConfig = {
+  libName: string;
+  version: string;
+  sessions: SessionItem[];
+  fullSessions: FullSessionItem[];
+};
+```
+
+#### Supported Architectures
+
+The `crates-llms-txt-napi` package provides prebuilt binaries for the following target architectures:
+
+| Target Triple                   |
+| ------------------------------- |
+| `x86_64-apple-darwin`           |
+| `aarch64-apple-darwin`          |
+| `x86_64-pc-windows-msvc`        |
+| `aarch64-pc-windows-msvc`       |
+| `i686-pc-windows-msvc`          |
+| `x86_64-unknown-linux-gnu`      |
+| `x86_64-unknown-linux-musl`     |
+| `aarch64-unknown-linux-gnu`     |
+| `aarch64-unknown-linux-musl`    |
+| `armv7-unknown-linux-gnueabihf` |
 
 ## License
 
