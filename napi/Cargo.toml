@@ -14,6 +14,18 @@ napi = { version = "3.0.0-alpha", features = ["async"] }
 napi-derive = "3.0.0-alpha"
 crates_llms_txt = { path = "../rs-lib", features = ["rustdoc"] }
 
+[target.armv7-unknown-linux-gnueabihf.dependencies]
+openssl-sys = { version = "0.9.109", features = ["vendored"] }
+
+[target.x86_64-unknown-linux-musl.dependencies]
+openssl-sys = { version = "0.9.109", features = ["vendored"] }
+
+[target.aarch64-unknown-linux-gnu.dependencies]
+openssl-sys = { version = "0.9.109", features = ["vendored"] }
+
+[target.aarch64-unknown-linux-musl.dependencies]
+openssl-sys = { version = "0.9.109", features = ["vendored"] }
+
 [build-dependencies]
 napi-build = "2"
 
