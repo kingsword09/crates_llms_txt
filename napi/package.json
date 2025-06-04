@@ -64,18 +64,19 @@
     "version": "napi version"
   },
   "devDependencies": {
-    "@napi-rs/cli": "3.0.0-alpha.84",
+    "@inquirer/prompts": "^7.5.1",
+    "@napi-rs/cli": "3.0.0-alpha.80",
     "@oxc-node/core": "^0.0.27",
     "@taplo/cli": "^0.7.0",
-    "@types/node": "^22.15.29",
-    "ava": "^6.3.0",
+    "@types/node": "^22.15.21",
+    "ava": "^6.2.0",
     "chalk": "^5.4.1",
     "husky": "^9.1.7",
-    "lint-staged": "^16.1.0",
-    "npm-run-all2": "^8.0.4",
+    "lint-staged": "^16.0.0",
+    "npm-run-all2": "^8.0.0",
     "oxlint": "^0.17.0",
-    "prettier": "^3.5.3",
-    "typescript": "^5.8.3"
+    "prettier": "^3.5.2",
+    "typescript": "^5.7.3"
   },
   "lint-staged": {
     "*.@(js|ts|tsx)": [
@@ -109,5 +110,18 @@
     "singleQuote": true,
     "arrowParens": "always"
   },
-  "packageManager": "pnpm@10.11.1"
+  "packageManager": "pnpm@10.11.1",
+  "optionalDependencies": {
+    "crates-llms-txt-napi-darwin-x64": "0.0.5",
+    "crates-llms-txt-napi-darwin-arm64": "0.0.5",
+    "crates-llms-txt-napi-linux-x64-gnu": "0.0.5",
+    "crates-llms-txt-napi-win32-x64-msvc": "0.0.5",
+    "crates-llms-txt-napi-linux-x64-musl": "0.0.5",
+    "crates-llms-txt-napi-linux-arm64-gnu": "0.0.5",
+    "crates-llms-txt-napi-win32-ia32-msvc": "0.0.5",
+    "crates-llms-txt-napi-linux-arm-gnueabihf": "0.0.5",
+    "crates-llms-txt-napi-freebsd-x64": "0.0.5",
+    "crates-llms-txt-napi-linux-arm64-musl": "0.0.5",
+    "crates-llms-txt-napi-win32-arm64-msvc": "0.0.5"
+  }
 }

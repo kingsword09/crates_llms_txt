@@ -1,6 +1,6 @@
 {
   "name": "crates-llms-txt-napi-linux-x64-gnu",
-  "version": "0.0.0",
+  "version": "0.0.5",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/kingsword09/crates_llms_txt.git"
