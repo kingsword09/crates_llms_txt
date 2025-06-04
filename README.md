@@ -1,9 +1,9 @@
 # crates_llms_txt
 
-[![Crates.io][crates-badge]][crates-url] <a :href="`https://www.npmjs.com/package/crates-llms-txt-napi`" target="_blank"><img src="https://img.shields.io/npm/v/crates-llms-txt-napi?label=npm" alt="NPM version"></a>
-
-[crates-badge]: https://img.shields.io/crates/v/crates_llms_txt
-[crates-url]: https://crates.io/crates/crates_llms_txt
+[![Crates.io][crates-src]][crates-href]
+[![npm version][npm-version-src]][npm-version-href]
+[![npm downloads][npm-downloads-src]][npm-downloads-href]
+[![License][license-src]][license-href]
 
 A repository for generating content for llms.txt and llms-full.txt files used by Rust libraries.
 
@@ -60,3 +60,14 @@ Please submit a PR with your changes.
 ## License
 
 MIT License
+
+<!-- Badges -->
+
+[npm-version-src]: https://img.shields.io/npm/v/crates-llms-txt-napi?style=flat&colorA=080f12&colorB=1fa669
+[npm-version-href]: https://npmjs.com/package/crates-llms-txt-napi
+[npm-downloads-src]: https://img.shields.io/npm/dm/crates-llms-txt-napi?style=flat&colorA=080f12&colorB=1fa669
+[npm-downloads-href]: https://npmjs.com/package/crates-llms-txt-napi
+[license-src]: https://img.shields.io/github/license/kingsword09/crates_llms_txt.svg?style=flat&colorA=080f12&colorB=1fa669
+[license-href]: https://github.com/kingsword09/crates_llms_txt/blob/main/LICENSE
+[crates-src]: https://img.shields.io/crates/v/crates_llms_txt
+[crates-href]: https://crates.io/crates/crates_llms_txt
