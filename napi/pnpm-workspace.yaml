@@ -1,0 +1,2 @@
+patchedDependencies:
+  '@napi-rs/cli@3.0.0-alpha.84': patches/@napi-rs__cli@3.0.0-alpha.84.patch

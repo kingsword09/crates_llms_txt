@@ -65,7 +65,7 @@
   },
   "devDependencies": {
     "@inquirer/prompts": "^7.5.1",
-    "@napi-rs/cli": "3.0.0-alpha.80",
+    "@napi-rs/cli": "3.0.0-alpha.84",
     "@oxc-node/core": "^0.0.27",
     "@taplo/cli": "^0.7.0",
     "@types/node": "^22.15.21",
@@ -123,5 +123,10 @@
     "crates-llms-txt-napi-freebsd-x64": "0.0.5",
     "crates-llms-txt-napi-linux-arm64-musl": "0.0.5",
     "crates-llms-txt-napi-win32-arm64-msvc": "0.0.5"
+  },
+  "pnpm": {
+    "patchedDependencies": {
+      "@napi-rs/cli": "patches/@napi-rs__cli@3.0.0-alpha.84.patch"
+    }
   }
 }

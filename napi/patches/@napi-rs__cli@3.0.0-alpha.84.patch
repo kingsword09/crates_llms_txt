@@ -1,0 +1,16 @@
+diff --git a/dist/utils/misc.js b/dist/utils/misc.js
+index 6e75dc33bc310be00fb00ef28dd4bdda7af29aa5..9236633510cb60153b7937c0c1953b950fc0cea4 100644
+--- a/dist/utils/misc.js
++++ b/dist/utils/misc.js
+@@ -1,7 +1,10 @@
+ import { readFile, writeFile, copyFile, mkdir, unlink, stat, readdir, } from 'node:fs';
++import { createRequire } from 'node:module';
+ import { promisify } from 'node:util';
+-import pkgJson from '../../package.json' with { type: 'json' };
++// import pkgJson from '../../package.json' with { type: 'json' };
+ import { debug } from './log.js';
++const require = createRequire(import.meta.url);
++const pkgJson = require('@napi-rs/cli/package.json');
+ export const readFileAsync = promisify(readFile);
+ export const writeFileAsync = promisify(writeFile);
+ export const unlinkAsync = promisify(unlink);
