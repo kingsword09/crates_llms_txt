@@ -24,27 +24,27 @@ fn llms_config_to_js_object(
     &JsValue::from_str("lib_name"),
     &JsValue::from(config.lib_name),
   )
-  .map_err(|e| JsError::new(&e.as_string().unwrap().as_str()))?;
+  .map_err(|e| JsError::new(e.as_string().unwrap().as_str()))?;
   Reflect::set(
     &obj,
     &JsValue::from_str("version"),
     &JsValue::from(config.version),
   )
-  .map_err(|e| JsError::new(&e.as_string().unwrap().as_str()))?;
+  .map_err(|e| JsError::new(e.as_string().unwrap().as_str()))?;
   Reflect::set(
     &obj,
     &JsValue::from_str("sessions"),
     // &JsValue::from(serde_json::to_string(&config.sessions).unwrap()),
     &JsValue::from(&config.sessions),
   )
-  .map_err(|e| JsError::new(&e.as_string().unwrap().as_str()))?;
+  .map_err(|e| JsError::new(e.as_string().unwrap().as_str()))?;
   Reflect::set(
     &obj,
     &JsValue::from_str("full_sessions"),
     // &JsValue::from(serde_json::to_string(&config.full_sessions).unwrap()),
     &JsValue::from(&config.full_sessions),
   )
-  .map_err(|e| JsError::new(&e.as_string().unwrap().as_str()))?;
+  .map_err(|e| JsError::new(e.as_string().unwrap().as_str()))?;
 
   Ok(obj)
 }

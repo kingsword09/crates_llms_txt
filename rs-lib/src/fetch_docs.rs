@@ -1,6 +1,6 @@
 use reqwest::header;
 
-const DOCS_BASE_URL: &'static str = "https://docs.rs/crate";
+const DOCS_BASE_URL: &str = "https://docs.rs/crate";
 
 pub struct OnlineDocs;
 

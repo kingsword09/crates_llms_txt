@@ -9,7 +9,7 @@ mod fetch_docs;
 mod gen_docs;
 mod temp_trait;
 
-const DOCS_BASE_URL: &'static str = "https://docs.rs/crate";
+const DOCS_BASE_URL: &str = "https://docs.rs/crate";
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct LLMsStandardStringConfig {
@@ -67,7 +67,7 @@ impl LLMsStandardConfig {
     version: Option<String>,
   ) -> Result<LLMsStandardStringConfig, Box<dyn std::error::Error>> {
     let version = version.unwrap_or(docs.crate_version());
-    let mut config = LLMsStandardConfig::new(&lib_name, &version);
+    let mut config = LLMsStandardConfig::new(lib_name, &version);
     let base_url =
       format!("{}/{}/{}/source", DOCS_BASE_URL, &lib_name, version);
 
@@ -102,14 +102,14 @@ impl LLMsStandardConfig {
       };
     }
 
-    return Ok(LLMsStandardStringConfig {
+    Ok(LLMsStandardStringConfig {
       lib_name: config.lib_name,
       version: config.version,
       sessions: serde_json::to_string(&config.sessions)
         .unwrap_or("".to_string()),
       full_sessions: serde_json::to_string(&config.full_sessions)
         .unwrap_or("".to_string()),
-    });
+    })
   }
 
   /// Get the LLM config for a given crate and version.
