@@ -28,6 +28,9 @@
       }
     }
   },
+  "files": [
+    "dist"
+  ],
   "scripts": {
     "build": "tsdown",
     "test": "node --test --experimental-strip-types ./tests/**.test.ts",
