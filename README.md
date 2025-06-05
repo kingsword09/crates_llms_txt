@@ -107,8 +107,8 @@ type FullSessionItem = { content: string; link: string };
 export type LlMsConfig = {
   libName: string;
   version: string;
-  sessions: SessionItem[];
-  fullSessions: FullSessionItem[];
+  sessions: string /*SessionItem[]*/;
+  fullSessions: string /*FullSessionItem[]*/;
 };
 ```
 
