@@ -7,4 +7,9 @@ export default defineConfig({
   target: "es2022",
   minify: true,
   dts: { isolatedDeclarations: true },
+  outExtensions(context) {
+    if(context.format === "cjs") {
+      return { js: ".cjs" };
+    }
+  },
 });

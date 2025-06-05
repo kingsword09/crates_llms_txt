@@ -1,7 +1,4 @@
 target
 .DS_Store
-npm/.npm
-npm/mod.ts
-npm/crates_llms_txt*
-jsr/crates_llms_txt*
+npm/dist
 node_modules

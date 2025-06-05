@@ -16,7 +16,7 @@ npm install crates-llms-txt
 
 ```ts
 import { getLlmsConfigOnline } from "crates-llms-txt";
-const llmsConfig = await getLlmsConfigOnline();
+const llmsConfig = await getLlmsConfigOnline("clap", "4.5.39");
 ```
 
 <!-- Badges -->
