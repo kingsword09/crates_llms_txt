@@ -4,3 +4,4 @@ npm/.npm
 npm/mod.ts
 npm/crates_llms_txt*
 jsr/crates_llms_txt*
+node_modules

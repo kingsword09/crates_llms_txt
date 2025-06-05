@@ -1,6 +1,0 @@
-{
-  "version": "0.0.4",
-  "tasks": {
-    "build": "deno run -A build.ts"
-  }
-}

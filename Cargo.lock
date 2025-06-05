@@ -192,16 +192,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "crates_llms_txt_wasm"
-version = "0.0.0"
-dependencies = [
- "crates_llms_txt",
- "js-sys",
- "wasm-bindgen",
- "wasm-bindgen-futures",
-]
-
-[[package]]
 name = "ctor"
 version = "0.4.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"

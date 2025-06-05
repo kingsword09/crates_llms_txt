@@ -1,6 +1,6 @@
 [workspace]
 resolver = "2"
-members = ["rs-lib", "wasm", "napi"]
+members = ["rs-lib", "napi"]
 
 [profile.release]
 codegen-units = 1

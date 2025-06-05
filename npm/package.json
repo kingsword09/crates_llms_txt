@@ -1,0 +1,45 @@
+{
+  "name": "crates-llms-txt",
+  "version": "0.0.5",
+  "description": "A repository for generating content for llms.txt and llms-full.txt files used by Rust libraries.",
+  "author": "Kingsword kingsword09 <kingsword09@gmail.com>",
+  "homepage": "https://github.com/kingsword09/crates_llms_txt#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kingsword09/crates_llms_txt.git"
+  },
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/kingsword09/crates_llms_txt/issues"
+  },
+  "main": "dist/index.js",
+  "module": "dist/index.mjs",
+  "types": "dist/index.d.ts",
+  "type": "module",
+  "exports": {
+    ".": {
+      "require": {
+        "types": "./dist/index.d.ts",
+        "default": "./dist/index.js"
+      },
+      "import": {
+        "types": "./dist/index.d.ts",
+        "default": "./dist/index.mjs"
+      }
+    }
+  },
+  "scripts": {
+    "build": "tsdown",
+    "test": "node --test --experimental-strip-types ./tests/**.test.ts",
+    "test:update": "node --test --experimental-strip-types --test-update-snapshots ./tests/**.test.ts",
+    "test:coverage": "node --test --experimental-test-coverage --experimental-strip-types ./tests/**.test.ts"
+  },
+  "dependencies": {
+    "crates-llms-txt-napi": "^0.0.5"
+  },
+  "devDependencies": {
+    "@types/node": "^22.15.29",
+    "tsdown": "^0.12.7",
+    "typescript": "^5.8.3"
+  }
+}
