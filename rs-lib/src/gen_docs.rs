@@ -3,6 +3,9 @@ use std::{collections::HashMap, path::PathBuf};
 use rustdoc_types::{Id, Item};
 use serde::{Deserialize, Serialize};
 
+/// A custom Crate structure that serves as a compatibility layer between rustdoc_types::Crate and local docs.
+/// Since local documentation generation may not produce fields that exactly match rustdoc_types,
+/// this structure provides a simplified schema to prevent deserialization failures.
 #[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
 pub struct Crate {
   /// The id of the root [`Module`] item of the local crate.
@@ -35,12 +38,12 @@ pub struct GenDocs {
 ///
 /// # Returns
 ///
-/// * `Result<PathBuf, Box<dyn std::error::Error>>` - The path to the generated docs.
+/// * `Result<GenDocs, Box<dyn std::error::Error>>` - The path to the generated docs.
 ///
 /// # Examples
 ///
 /// ```no_run
-/// let docs_path = gen_docs_with_all_features("nightly", "Cargo.toml", None).unwrap();
+/// let docs_path = gen_docs_with_all_features("nightly", "Cargo.toml").unwrap();
 /// ```
 pub fn gen_docs_with_all_features(
   toolchain: &str,
@@ -83,12 +86,12 @@ pub fn gen_docs_with_all_features(
 ///
 /// # Returns
 ///
-/// * `Result<PathBuf, Box<dyn std::error::Error>>` - The path to the generated docs.
+/// * `Result<GenDocs, Box<dyn std::error::Error>>` - The path to the generated docs.
 ///
 /// # Examples
 ///
 /// ```no_run
-/// let docs_path = gen_docs_with_features("nightly", "Cargo.toml", true, vec!["async".to_string()]).unwrap();
+/// let docs_path = gen_docs_with_features("nightly", "Cargo.toml", true, Some(vec!["async".to_string()])).unwrap();
 /// ```
 pub fn gen_docs_with_features(
   toolchain: &str,

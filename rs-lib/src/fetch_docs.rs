@@ -14,7 +14,7 @@ impl OnlineDocs {
   ///
   /// # Returns
   ///
-  /// * `Result<DocsRoot, Box<dyn std::error::Error>>` - The docs for the crate.
+  /// * `Result<rustdoc_types::Crate, Box<dyn std::error::Error>>` - The docs for the crate.
   ///
   /// # Examples
   ///
