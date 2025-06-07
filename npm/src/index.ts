@@ -1,5 +1,6 @@
 import {
-  getLlmsConfigOnline as getOnline,
+  getLlmsConfigOnlineByCratesName as getOnlineByCratesName,
+  getLlmsConfigOnlineByUrl as getOnlineByUrl,
   getLlmsConfigByRustdocAllFeatures as getByAllFeatures,
   getLlmsConfigByRustdocFeatures as getByFeatures,
 } from "crates-llms-txt-napi";
@@ -8,17 +9,31 @@ import type { LLMsStandardConfig } from "./types.ts";
 import { processLlmsConfig } from "./utils.ts";
 
 /**
- * Get the LLMs config from the online API.
+ * Get the LLMs config from the online API by crates name.
  *
  * @param libName The name of the library.
  * @param version The version of the library.
  * @returns The LLMs config.
  */
-export const getLlmsConfigOnline = async (
+export const getLlmsConfigOnlineByCratesName = async (
   libName: string,
   version?: string
 ): Promise<LLMsStandardConfig | null> => {
-  const config = await getOnline(libName, version);
+  const config = await getOnlineByCratesName(libName, version);
+
+  return processLlmsConfig(config);
+};
+
+/**
+ * Get the LLMs config from the online API by url.
+ *
+ * @param url The url of the library.
+ * @returns The LLMs config.
+ */
+export const getLlmsConfigOnlineByUrl = async (
+  url: string
+): Promise<LLMsStandardConfig | null> => {
+  const config = await getOnlineByUrl(url);
 
   return processLlmsConfig(config);
 };

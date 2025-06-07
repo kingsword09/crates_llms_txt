@@ -1,6 +1,6 @@
 {
   "name": "crates-llms-txt",
-  "version": "0.0.5",
+  "version": "0.0.6",
   "description": "A repository for generating content for llms.txt and llms-full.txt files used by Rust libraries.",
   "author": "Kingsword kingsword09 <kingsword09@gmail.com>",
   "homepage": "https://github.com/kingsword09/crates_llms_txt#readme",
@@ -39,7 +39,7 @@
     "test:coverage": "node --test --experimental-test-coverage --experimental-strip-types ./tests/**.test.ts"
   },
   "dependencies": {
-    "crates-llms-txt-napi": "^0.0.5"
+    "crates-llms-txt-napi": "^0.0.6"
   },
   "devDependencies": {
     "@types/node": "^22.15.29",
