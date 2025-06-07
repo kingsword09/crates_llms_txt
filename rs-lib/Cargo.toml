@@ -1,6 +1,6 @@
 [package]
 name = "crates_llms_txt"
-version = "0.0.5"
+version = "0.0.6"
 edition = "2021"
 description = "A Rust library for generating llms.txt and llms-full.txt files"
 homepage = "https://github.com/kingsword09"
