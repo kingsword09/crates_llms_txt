@@ -15,7 +15,7 @@
  * # Examples
  *
  * ```no_run
- * let config = get_llms_config_by_rustdoc_all_features("stable", "path/to/Cargo.toml");
+ * let config = get_llms_config_by_rustdoc_all_features("stable".to_string(), "path/to/Cargo.toml".to_string());
  * ```
  */
 export declare function getLlmsConfigByRustdocAllFeatures(toolchain: string, manifestPath: string): LlMsConfig | null
@@ -37,7 +37,7 @@ export declare function getLlmsConfigByRustdocAllFeatures(toolchain: string, man
  * # Examples
  *
  * ```no_run
- * let config = get_llms_config_by_rustdoc_features("stable", "path/to/Cargo.toml", false, Some(vec!["async".to_string()]));
+ * let config = get_llms_config_by_rustdoc_features("stable".to_string(), "path/to/Cargo.toml".to_string(), false, Some(vec!["async".to_string()]));
  * ```
  */
 export declare function getLlmsConfigByRustdocFeatures(toolchain: string, manifestPath: string, noDefaultFeatures: boolean, features?: Array<string> | undefined | null): LlMsConfig | null
@@ -57,10 +57,31 @@ export declare function getLlmsConfigByRustdocFeatures(toolchain: string, manife
  * # Examples
  *
  * ```no_run
- * let config = get_llms_config_online("clap", Some("4.5.39"));
+ * let config = get_llms_config_online("clap".to_string(), Some("4.5.39".to_string())).await?;
  * ```
+ *
  */
 export declare function getLlmsConfigOnline(libName: string, version?: string | undefined | null): Promise<LlMsConfig | null>
+
+/**
+ * Get llms config by online by url
+ *
+ * # Arguments
+ *
+ * * `url` - The url of the crate
+ *
+ * # Returns
+ *
+ * * `Option<LLMsConfig>` - The generated documentation configuration
+ *
+ * # Examples
+ *
+ * ```no_run
+ * let config = get_llms_config_online_by_url("https://docs.rs/crate/clap/latest/json".to_string()).await?;
+ * ```
+ *
+ */
+export declare function getLlmsConfigOnlineByUrl(url: string): Promise<LlMsConfig | null>
 
 export interface LlMsConfig {
   libName: string

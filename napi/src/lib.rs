@@ -28,7 +28,7 @@ pub struct LLMsConfig {
 /// # Examples
 ///
 /// ```no_run
-/// let config = get_llms_config_online("clap", Some("4.5.39".to_string())).await?;
+/// let config = get_llms_config_online("clap".to_string(), Some("4.5.39".to_string())).await?;
 /// ```
 /// 
 pub async fn get_llms_config_online(
@@ -46,6 +46,7 @@ pub async fn get_llms_config_online(
   }
 }
 
+#[napi]
 /// Get llms config by online by url
 ///
 /// # Arguments
@@ -59,7 +60,7 @@ pub async fn get_llms_config_online(
 /// # Examples
 ///
 /// ```no_run
-/// let config = get_llms_config_online_by_url("https://docs.rs/crate/clap/latest/json").await?;
+/// let config = get_llms_config_online_by_url("https://docs.rs/crate/clap/latest/json".to_string()).await?;
 /// ```
 ///
 pub async fn get_llms_config_online_by_url(url: String) -> Option<LLMsConfig> {
@@ -89,7 +90,7 @@ pub async fn get_llms_config_online_by_url(url: String) -> Option<LLMsConfig> {
 /// # Examples
 ///
 /// ```no_run
-/// let config = get_llms_config_by_rustdoc_all_features("stable", "path/to/Cargo.toml");
+/// let config = get_llms_config_by_rustdoc_all_features("stable".to_string(), "path/to/Cargo.toml".to_string());
 /// ```
 pub fn get_llms_config_by_rustdoc_all_features(
   toolchain: String,
@@ -127,7 +128,7 @@ pub fn get_llms_config_by_rustdoc_all_features(
 /// # Examples
 ///
 /// ```no_run
-/// let config = get_llms_config_by_rustdoc_features("stable", "path/to/Cargo.toml", false, Some(vec!["async".to_string()]));
+/// let config = get_llms_config_by_rustdoc_features("stable".to_string(), "path/to/Cargo.toml".to_string(), false, Some(vec!["async".to_string()]));
 /// ```
 pub fn get_llms_config_by_rustdoc_features(
   toolchain: String,

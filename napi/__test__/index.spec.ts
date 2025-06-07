@@ -2,7 +2,12 @@ import test from 'ava'
 import path from 'node:path'
 import process from 'node:process'
 
-import { getLlmsConfigByRustdocAllFeatures, getLlmsConfigByRustdocFeatures, getLlmsConfigOnline } from '../index.js'
+import {
+  getLlmsConfigByRustdocAllFeatures,
+  getLlmsConfigByRustdocFeatures,
+  getLlmsConfigOnline,
+  getLlmsConfigOnlineByUrl,
+} from '../index.js'
 
 test('getLlmsConfigByRustdocAllFeatures_success', (t) => {
   const config = getLlmsConfigByRustdocAllFeatures('stable', path.resolve(process.cwd(), '../rs-lib/Cargo.toml'))
@@ -20,6 +25,12 @@ test('getLlmsConfigByRustdocFeatures_success', (t) => {
 
 test('getLlmsConfigOnline_success', async (t) => {
   const config = await getLlmsConfigOnline('clap', '4.5.39')
+  t.is(config?.libName, 'clap')
+  t.is(config?.version, '4.5.39')
+})
+
+test('getLlmsConfigOnlineByUrl_success', async (t) => {
+  const config = await getLlmsConfigOnlineByUrl('https://docs.rs/crate/clap/latest/json')
   t.is(config?.libName, 'clap')
   t.is(config?.version, '4.5.39')
 })

@@ -378,3 +378,4 @@ module.exports = nativeBinding
 module.exports.getLlmsConfigByRustdocAllFeatures = nativeBinding.getLlmsConfigByRustdocAllFeatures
 module.exports.getLlmsConfigByRustdocFeatures = nativeBinding.getLlmsConfigByRustdocFeatures
 module.exports.getLlmsConfigOnline = nativeBinding.getLlmsConfigOnline
+module.exports.getLlmsConfigOnlineByUrl = nativeBinding.getLlmsConfigOnlineByUrl
