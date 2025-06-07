@@ -141,7 +141,7 @@ impl LLMsStandardConfig {
   pub async fn get_llms_config_online(
     lib_name: &str,
     version: Option<String>,
-  ) -> Result<LLMsStandardStringConfig, Box<dyn std::error::Error>> {
+  ) -> Result<LLMsStandardStringConfig, Box<dyn Error>> {
     if let Ok(docs) = OnlineDocs::fetch_docs(lib_name, version.clone()).await {
       return LLMsStandardConfig::process_docs(lib_name, docs, version);
     }

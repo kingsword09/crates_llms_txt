@@ -14,7 +14,7 @@ pub struct LLMsConfig {
 }
 
 #[napi]
-/// Get llms config by online
+/// Get llms config online by crates name
 ///
 /// # Arguments
 ///
@@ -30,8 +30,8 @@ pub struct LLMsConfig {
 /// ```no_run
 /// let config = get_llms_config_online("clap".to_string(), Some("4.5.39".to_string())).await?;
 /// ```
-/// 
-pub async fn get_llms_config_online(
+///
+pub async fn get_llms_config_online_by_crates_name(
   lib_name: String,
   version: Option<String>,
 ) -> Option<LLMsConfig> {

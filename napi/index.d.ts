@@ -43,7 +43,7 @@ export declare function getLlmsConfigByRustdocAllFeatures(toolchain: string, man
 export declare function getLlmsConfigByRustdocFeatures(toolchain: string, manifestPath: string, noDefaultFeatures: boolean, features?: Array<string> | undefined | null): LlMsConfig | null
 
 /**
- * Get llms config by online
+ * Get llms config online by crates name
  *
  * # Arguments
  *
@@ -61,7 +61,7 @@ export declare function getLlmsConfigByRustdocFeatures(toolchain: string, manife
  * ```
  *
  */
-export declare function getLlmsConfigOnline(libName: string, version?: string | undefined | null): Promise<LlMsConfig | null>
+export declare function getLlmsConfigOnlineByCratesName(libName: string, version?: string | undefined | null): Promise<LlMsConfig | null>
 
 /**
  * Get llms config by online by url
