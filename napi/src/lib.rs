@@ -28,13 +28,42 @@ pub struct LLMsConfig {
 /// # Examples
 ///
 /// ```no_run
-/// let config = get_llms_config_online("clap", Some("4.5.39"));
+/// let config = get_llms_config_online("clap", Some("4.5.39".to_string())).await?;
 /// ```
+/// 
 pub async fn get_llms_config_online(
   lib_name: String,
   version: Option<String>,
 ) -> Option<LLMsConfig> {
   match LLMsStandardConfig::get_llms_config_online(&lib_name, version).await {
+    Ok(config) => Some(LLMsConfig {
+      lib_name: config.lib_name,
+      version: config.version,
+      sessions: config.sessions,
+      full_sessions: config.full_sessions,
+    }),
+    Err(_) => None,
+  }
+}
+
+/// Get llms config by online by url
+///
+/// # Arguments
+///
+/// * `url` - The url of the crate
+///
+/// # Returns
+///
+/// * `Option<LLMsConfig>` - The generated documentation configuration
+///
+/// # Examples
+///
+/// ```no_run
+/// let config = get_llms_config_online_by_url("https://docs.rs/crate/clap/latest/json").await?;
+/// ```
+///
+pub async fn get_llms_config_online_by_url(url: String) -> Option<LLMsConfig> {
+  match LLMsStandardConfig::get_llms_config_online_by_url(&url).await {
     Ok(config) => Some(LLMsConfig {
       lib_name: config.lib_name,
       version: config.version,
