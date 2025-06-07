@@ -175,7 +175,11 @@ impl LLMsStandardConfig {
     url: &str,
   ) -> Result<LLMsStandardStringConfig, Box<dyn Error>> {
     if let Ok(docs) = OnlineDocs::fetch_docs_by_url(url).await {
-      return LLMsStandardConfig::process_docs("unknown", docs, None);
+      let root_id = docs.root;
+      if let Some(root_item) = docs.clone().index.get(&root_id) {
+        let lib_name = &root_item.name.clone().unwrap_or("unknown".to_string());
+        return LLMsStandardConfig::process_docs(lib_name, docs, None);
+      }
     }
 
     Err("Failed to get llms config".into())
