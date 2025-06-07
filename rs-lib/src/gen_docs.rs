@@ -113,16 +113,30 @@ pub fn gen_docs_with_features(
 
 #[cfg(test)]
 mod tests {
-  use crate::gen_docs::gen_docs_with_all_features;
+  use crate::gen_docs::{gen_docs_with_all_features, gen_docs_with_features};
 
   #[cfg(feature = "rustdoc")]
-  #[tokio::test]
-  async fn test_gen_docs_with_all_features_success() {
+  #[test]
+  fn test_gen_docs_with_all_features_success() {
     let current_dir = std::env::current_dir().unwrap();
     let gen_docs_struct =
       gen_docs_with_all_features("stable", current_dir.join("Cargo.toml"))
         .unwrap();
 
+    assert_eq!(gen_docs_struct.lib_name, "crates_llms_txt");
+  }
+
+  #[cfg(feature = "rustdoc")]
+  #[test]
+  fn test_gen_docs_with_features_success() {
+    let current_dir = std::env::current_dir().unwrap();
+    let gen_docs_struct = gen_docs_with_features(
+      "stable",
+      current_dir.join("Cargo.toml"),
+      true,
+      Some(vec!["rustdoc".to_string()]),
+    )
+    .unwrap();
     assert_eq!(gen_docs_struct.lib_name, "crates_llms_txt");
   }
 }
