@@ -1,34 +1,42 @@
 use reqwest::header;
+use serde::{Deserialize, Serialize};
+use std::error::Error;
+
+use crate::temp_trait::{CommonCrates, Crate};
 
 const DOCS_BASE_URL: &str = "https://docs.rs/crate";
 
 pub struct OnlineDocs;
 
 impl OnlineDocs {
-  /// Fetch the docs for a given crate and version.
+  /// Fetch the json for a given url.
   ///
   /// # Arguments
   ///
-  /// * `lib_name` - The name of the crate.
-  /// * `version` - The version of the crate. If None, the latest version will be used.
+  /// * `url` - The url of the json.
   ///
   /// # Returns
   ///
-  /// * `Result<rustdoc_types::Crate, Box<dyn std::error::Error>>` - The docs for the crate.
+  /// * `Result<T, Box<dyn Error>>` - The json for the url.
   ///
   /// # Examples
   ///
   /// ```no_run
-  /// let docs = OnlineDocs::fetch_docs("clap", Some("4.5.39")).await.unwrap();
+  /// use crates_llms_txt::fetch_docs::OnlineDocs;
+  ///
+  /// #[tokio::main]
+  /// async fn main() -> Result<(), Box<dyn std::error::Error>> {
+  ///   let json = OnlineDocs::fetch_json::<rustdoc_types::Crate>("https://docs.rs/crate/clap/latest/json").await?;
+  ///
+  ///   Ok(())
+  /// }
   /// ```
   ///
-  pub async fn fetch_docs(
-    lib_name: &str,
-    version: Option<String>,
-  ) -> Result<rustdoc_types::Crate, Box<dyn std::error::Error>> {
-    let client = reqwest::Client::builder().build().unwrap();
-    let version = version.unwrap_or("latest".to_string());
-    let url = format!("{}/{}/{}/json", DOCS_BASE_URL, lib_name, version);
+  pub async fn fetch_json<'a, T>(url: &str) -> Result<T, Box<dyn Error>>
+  where
+    T: CommonCrates + Serialize + Deserialize<'a>,
+  {
+    let client = reqwest::Client::builder().build()?;
     let response = client.get(url).send().await?;
     let headers = response.headers().clone();
 
@@ -54,11 +62,73 @@ impl OnlineDocs {
       decompressed_bytes = body_bytes.into_iter().collect(); // Convert Bytes to Vec<u8>
     }
 
-    // Now, parse the (potentially decompressed) bytes as JSON
-    let json_data: rustdoc_types::Crate =
-      serde_json::from_slice(&decompressed_bytes)?;
+    // First try to parse as rustdoc_types::Crate
+    let result =
+      serde_json::from_slice::<T>(&*Box::leak(Box::new(decompressed_bytes)))
+        .map_err(|e| Box::new(e) as Box<dyn Error>)?;
 
-    Ok(json_data)
+    // Return the parsed result
+    Ok(result)
+  }
+
+  /// Fetch the docs for a given crate and version.
+  ///
+  /// # Arguments
+  ///
+  /// * `lib_name` - The name of the crate.
+  /// * `version` - The version of the crate. If None, the latest version will be used.
+  ///
+  /// # Returns
+  ///
+  /// * `Result<rustdoc_types::Crate, Box<dyn std::error::Error>>` - The docs for the crate.
+  ///
+  /// # Examples
+  ///
+  /// ```no_run
+  /// use crates_llms_txt::fetch_docs::OnlineDocs;
+  ///
+  /// #[tokio::main]
+  /// async fn main() -> Result<(), Box<dyn std::error::Error>> {
+  ///   let docs = OnlineDocs::fetch_docs("clap", Some("4.5.39".to_string())).await?;
+  ///
+  ///   Ok(())
+  /// }
+  /// ```
+  ///
+  pub async fn fetch_docs(
+    lib_name: &str,
+    version: Option<String>,
+  ) -> Result<rustdoc_types::Crate, Box<dyn Error>> {
+    let version = version.unwrap_or("latest".to_string());
+    let url = format!("{}/{}/{}/json", DOCS_BASE_URL, lib_name, version);
+    OnlineDocs::fetch_json::<rustdoc_types::Crate>(url.as_str()).await
+  }
+
+  /// Fetch the docs for a given crate and version.
+  ///
+  /// # Arguments
+  ///
+  /// * `url` - The url of the crate.
+  ///
+  /// # Returns
+  ///
+  /// * `Result<Crate, Box<dyn std::error::Error>>` - The docs for the crate.
+  ///
+  /// # Examples
+  ///
+  /// ```no_run
+  /// use crates_llms_txt::fetch_docs::OnlineDocs;
+  ///
+  /// #[tokio::main]
+  /// async fn main() -> Result<(), Box<dyn std::error::Error>> {
+  ///   let docs = OnlineDocs::fetch_docs_by_url("https://docs.rs/crate/clap/latest/json").await?;
+  ///
+  ///   Ok(())
+  /// }
+  /// ```
+  ///
+  pub async fn fetch_docs_by_url(url: &str) -> Result<Crate, Box<dyn Error>> {
+    OnlineDocs::fetch_json::<Crate>(url).await
   }
 }
 

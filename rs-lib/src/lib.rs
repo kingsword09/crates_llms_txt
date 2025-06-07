@@ -1,13 +1,16 @@
 use fetch_docs::OnlineDocs;
 use rustdoc_types::Visibility;
 use serde::{Deserialize, Serialize};
+use std::error::Error;
+#[cfg(feature = "rustdoc")]
 use std::path::PathBuf;
+
 use temp_trait::CommonCrates;
 
-mod fetch_docs;
+pub mod fetch_docs;
 #[cfg(feature = "rustdoc")]
 mod gen_docs;
-mod temp_trait;
+pub mod temp_trait;
 
 const DOCS_BASE_URL: &str = "https://docs.rs/crate";
 
@@ -59,13 +62,13 @@ impl LLMsStandardConfig {
   ///
   /// # Returns
   ///
-  /// * `Result<LLMsStandardConfig, Box<dyn std::error::Error>>` - The LLM config for the crate.
+  /// * `Result<LLMsStandardConfig, Box<dyn Error>>` - The LLM config for the crate.
   ///
   fn process_docs<T: CommonCrates>(
     lib_name: &str,
     docs: T,
     version: Option<String>,
-  ) -> Result<LLMsStandardStringConfig, Box<dyn std::error::Error>> {
+  ) -> Result<LLMsStandardStringConfig, Box<dyn Error>> {
     let version = version.unwrap_or(docs.crate_version());
     let mut config = LLMsStandardConfig::new(lib_name, &version);
     let base_url =
@@ -125,8 +128,14 @@ impl LLMsStandardConfig {
   ///
   /// # Examples
   ///
-  /// ```
-  /// let config = LLMsStandardConfig::get_llms_config("clap", Some("4.5.39")).await?;
+  /// ```no_run
+  /// use crates_llms_txt::LLMsStandardConfig;
+  ///
+  /// #[tokio::main]
+  /// async fn main() -> Result<(), Box<dyn std::error::Error>> {
+  ///   let config = LLMsStandardConfig::get_llms_config_online("clap", Some("4.5.39".to_string())).await?;
+  ///   Ok(())
+  /// }
   /// ```
   ///
   pub async fn get_llms_config_online(
@@ -135,6 +144,38 @@ impl LLMsStandardConfig {
   ) -> Result<LLMsStandardStringConfig, Box<dyn std::error::Error>> {
     if let Ok(docs) = OnlineDocs::fetch_docs(lib_name, version.clone()).await {
       return LLMsStandardConfig::process_docs(lib_name, docs, version);
+    }
+
+    Err("Failed to get llms config".into())
+  }
+
+  /// Get the LLM config for a given url.
+  ///
+  /// # Arguments
+  ///
+  /// * `url` - The url of the json.
+  ///
+  /// # Returns
+  ///
+  /// * `Result<LLMsStandardConfig, Box<dyn Error>>` - The LLM config for the crate.
+  ///
+  /// # Examples
+  ///
+  /// ```no_run
+  /// use crates_llms_txt::LLMsStandardConfig;
+  ///
+  /// #[tokio::main]
+  /// async fn main() -> Result<(), Box<dyn std::error::Error>> {
+  ///   let config = LLMsStandardConfig::get_llms_config_online_by_url("https://docs.rs/crate/clap/latest/json").await?;
+  ///   Ok(())
+  /// }
+  /// ```
+  ///
+  pub async fn get_llms_config_online_by_url(
+    url: &str,
+  ) -> Result<LLMsStandardStringConfig, Box<dyn Error>> {
+    if let Ok(docs) = OnlineDocs::fetch_docs_by_url(url).await {
+      return LLMsStandardConfig::process_docs("unknown", docs, None);
     }
 
     Err("Failed to get llms config".into())
@@ -149,7 +190,7 @@ impl LLMsStandardConfig {
   ///
   /// # Returns
   ///
-  /// * `Result<LLMsStandardStringConfig, Box<dyn std::error::Error>>` - The generated documentation config
+  /// * `Result<LLMsStandardStringConfig, Box<dyn Error>>` - The generated documentation config
   ///
   /// # Examples
   ///
@@ -163,7 +204,7 @@ impl LLMsStandardConfig {
   pub fn get_llms_config_offline_with_all_features(
     toolchain: &str,
     manifest_path: PathBuf,
-  ) -> Result<LLMsStandardStringConfig, Box<dyn std::error::Error>> {
+  ) -> Result<LLMsStandardStringConfig, Box<dyn Error>> {
     if let Ok(gen_docs_struct) =
       gen_docs::gen_docs_with_all_features(toolchain, manifest_path)
     {
@@ -186,7 +227,7 @@ impl LLMsStandardConfig {
   ///
   /// # Returns
   ///
-  /// * `Result<LLMsStandardStringConfig, Box<dyn std::error::Error>>` - The generated documentation config
+  /// * `Result<LLMsStandardStringConfig, Box<dyn Error>>` - The generated documentation config
   ///
   /// # Examples
   ///
@@ -204,7 +245,7 @@ impl LLMsStandardConfig {
     manifest_path: PathBuf,
     no_default_features: bool,
     features: Option<Vec<String>>,
-  ) -> Result<LLMsStandardStringConfig, Box<dyn std::error::Error>> {
+  ) -> Result<LLMsStandardStringConfig, Box<dyn Error>> {
     if let Ok(gen_docs_struct) = gen_docs::gen_docs_with_features(
       toolchain,
       manifest_path,
