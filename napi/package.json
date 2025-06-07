@@ -44,7 +44,7 @@
     "packageName": "crates-llms-txt-napi"
   },
   "engines": {
-    "node": ">= 20"
+    "node": ">= 10"
   },
   "publishConfig": {
     "registry": "https://registry.npmjs.org/",

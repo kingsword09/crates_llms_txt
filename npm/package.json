@@ -1,6 +1,6 @@
 {
   "name": "crates-llms-txt",
-  "version": "0.0.6",
+  "version": "0.0.7",
   "description": "A repository for generating content for llms.txt and llms-full.txt files used by Rust libraries.",
   "author": "Kingsword kingsword09 <kingsword09@gmail.com>",
   "homepage": "https://github.com/kingsword09/crates_llms_txt#readme",
