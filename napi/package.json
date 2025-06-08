@@ -1,6 +1,6 @@
 {
   "name": "crates-llms-txt-napi",
-  "version": "0.0.6",
+  "version": "0.0.8",
   "description": "A repository for generating content for llms.txt and llms-full.txt files used by Rust libraries.",
   "main": "index.js",
   "module": "index.js",
