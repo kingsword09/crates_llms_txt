@@ -1,10 +1,10 @@
 import { test, describe } from "node:test";
 import { strictEqual } from "node:assert";
-import { getLlmsConfigOnline } from "../src/index.ts";
+import { getLlmsConfigOnlineByCratesName } from "../src/index.ts";
 
 describe("online", () => {
   test("online_success", async () => {
-    const config = await getLlmsConfigOnline("clap", "4.5.39");
+    const config = await getLlmsConfigOnlineByCratesName("clap", "4.5.39");
     strictEqual(config?.libName, "clap");
     strictEqual(config?.version, "4.5.39");
     strictEqual(config?.sessions.length > 0, true);
@@ -17,7 +17,7 @@ describe("online", () => {
   // })
 
   test("online_failure", async () => {
-    const config = await getLlmsConfigOnline("xxxxxx", "4.5.39");
+    const config = await getLlmsConfigOnlineByCratesName("xxxxxx", "4.5.39");
     strictEqual(config, null);
   });
 });

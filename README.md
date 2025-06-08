@@ -79,10 +79,10 @@ npm install crates-llms-txt-napi
 **Usage Example:**
 
 ```typescript
-import { getLlmsConfigOnline } from "crates-llms-txt-napi";
+import { getLlmsConfigOnlineByCratesName } from "crates-llms-txt-napi";
 
 async function main() {
-  const config = await getLlmsConfigOnline("clap", "4.5.39");
+  const config = await getLlmsConfigOnlineByCratesName("clap", "4.5.39");
 }
 
 main();
@@ -90,7 +90,7 @@ main();
 
 **API:**
 
-#### `getLlmsConfigOnline(libName: string, version?: string): Promise<LlMsConfig>`
+#### `getLlmsConfigOnlineByCratesName(libName: string, version?: string): Promise<LlMsConfig>`
 
 Fetches the standard configuration for a given Rust crate and version.
 
