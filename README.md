@@ -142,7 +142,7 @@ main();
 
 **API:**
 
-#### `async getLlmsConfigOnlineByCratesName(libName: string, version?: string): Promise<LlMsConfig | null>`
+#### `getLlmsConfigOnlineByCratesName(libName: string, version?: string): Promise<LlMsConfig | null>`
 
 Fetches the standard configuration for a given Rust crate and version from online sources (docs.rs).
 
@@ -150,7 +150,7 @@ Fetches the standard configuration for a given Rust crate and version from onlin
 - `version?: string`: The version string (optional, if not provided or `undefined`, the latest version of the crate will be attempted).
 - **Returns:** `Promise<LlMsConfig | null>` - A promise that resolves to the `LlMsConfig` object or `null` if an error occurs (e.g., crate not found, network issue).
 
-#### `async getLlmsConfigOnlineByUrl(url: string): Promise<LlMsConfig | null>`
+#### `getLlmsConfigOnlineByUrl(url: string): Promise<LlMsConfig | null>`
 
 Fetches the standard configuration for a Rust crate by providing a direct URL to its `docs.rs` JSON documentation file.
 
@@ -208,8 +208,6 @@ The `crates-llms-txt-napi` package provides prebuilt binaries for the following 
 
 ### NPM Package: `crates-llms-txt`
 
-[![npm version][npm-main-version-src]][npm-main-version-href] [![npm downloads][npm-main-downloads-src]][npm-main-downloads-href]
-
 This is a higher-level JavaScript/TypeScript wrapper over the `crates-llms-txt-napi` package. It provides a more user-friendly interface by automatically parsing the JSON strings for `sessions` and `fullSessions` into structured JavaScript objects.
 
 - **NPM Package:** [crates-llms-txt](https://www.npmjs.com/package/crates-llms-txt)
@@ -252,7 +250,7 @@ main();
 
 All functions return `null` if the underlying NAPI call fails or if the JSON parsing of session data is unsuccessful.
 
-##### `async getLlmsConfigOnlineByCratesName(libName: string, version?: string): Promise<LLMsStandardConfig | null>`
+##### `getLlmsConfigOnlineByCratesName(libName: string, version?: string): Promise<LLMsStandardConfig | null>`
 
 Get the LLMs config from the online API by crates name. `sessions` and `fullSessions` are parsed into objects.
 
@@ -260,7 +258,7 @@ Get the LLMs config from the online API by crates name. `sessions` and `fullSess
 -   `version?: string`: The version of the library. (Optional, defaults to latest if not specified).
 -   **Returns:** `Promise<LLMsStandardConfig | null>` - The LLMs config with parsed sessions, or `null` on error.
 
-##### `async getLlmsConfigOnlineByUrl(url: string): Promise<LLMsStandardConfig | null>`
+##### `getLlmsConfigOnlineByUrl(url: string): Promise<LLMsStandardConfig | null>`
 
 Get the LLMs config from the online API by URL. `sessions` and `fullSessions` are parsed into objects.
 
