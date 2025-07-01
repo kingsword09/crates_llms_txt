@@ -3,6 +3,7 @@
 use std::path::PathBuf;
 
 use crates_llms_txt::LLMsStandardConfig;
+use napi::Either;
 use napi_derive::napi;
 
 #[napi(object)]
@@ -11,6 +12,31 @@ pub struct LLMsConfig {
   pub version: String,
   pub sessions: String,
   pub full_sessions: String,
+}
+
+#[napi(object)]
+pub struct LLMsConfigByCrate {
+  pub lib_name: String,
+  pub version: Option<String>,
+}
+
+#[napi(object)]
+pub struct LLMsConfigByUrl {
+  pub url: String,
+}
+
+#[napi(object)]
+pub struct LLMsConfigRustdocByAllFeatures {
+  pub toolchain: String,
+  pub manifest_path: String,
+}
+
+#[napi(object)]
+pub struct LLMsConfigRustdocByFeatures {
+  pub toolchain: String,
+  pub manifest_path: String,
+  pub no_default_features: bool,
+  pub features: Option<Vec<String>>,
 }
 
 #[napi]
@@ -72,6 +98,19 @@ pub async fn get_llms_config_online_by_url(url: String) -> Option<LLMsConfig> {
       full_sessions: config.full_sessions,
     }),
     Err(_) => None,
+  }
+}
+
+#[napi]
+pub async fn get_llms_config_online(
+  params: Either<LLMsConfigByCrate, LLMsConfigByUrl>,
+) -> Option<LLMsConfig> {
+  match params {
+    Either::A(params) => {
+      get_llms_config_online_by_crates_name(params.lib_name, params.version)
+        .await
+    }
+    Either::B(params) => get_llms_config_online_by_url(params.url).await,
   }
 }
 
@@ -150,5 +189,23 @@ pub fn get_llms_config_by_rustdoc_features(
       full_sessions: config.full_sessions,
     }),
     Err(_) => None,
+  }
+}
+
+#[napi]
+pub fn get_llms_config_by_rustdoc(
+  params: Either<LLMsConfigRustdocByAllFeatures, LLMsConfigRustdocByFeatures>,
+) -> Option<LLMsConfig> {
+  match params {
+    Either::A(params) => get_llms_config_by_rustdoc_all_features(
+      params.toolchain,
+      params.manifest_path,
+    ),
+    Either::B(params) => get_llms_config_by_rustdoc_features(
+      params.toolchain,
+      params.manifest_path,
+      params.no_default_features,
+      params.features,
+    ),
   }
 }
