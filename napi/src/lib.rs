@@ -102,6 +102,32 @@ pub async fn get_llms_config_online_by_url(url: String) -> Option<LLMsConfig> {
 }
 
 #[napi]
+/// Get llms config online by either crate name or URL
+///
+/// # Arguments
+///
+/// * `params` - Either a LLMsConfigByCrate or LLMsConfigByUrl object containing:
+///   - For crate: lib_name and optional version
+///   - For URL: url string
+///
+/// # Returns
+///
+/// * `Option<LLMsConfig>` - The generated documentation configuration
+///
+/// # Examples
+///
+/// ```no_run
+/// // By crate name
+/// let config = get_llms_config_online(Either::A(LLMsConfigByCrate {
+///   lib_name: "clap".to_string(),
+///   version: Some("4.5.39".to_string())
+/// })).await?;
+///
+/// // By URL
+/// let config = get_llms_config_online(Either::B(LLMsConfigByUrl {
+///   url: "https://docs.rs/crate/clap/latest/json".to_string()
+/// })).await?;
+/// ```
 pub async fn get_llms_config_online(
   params: Either<LLMsConfigByCrate, LLMsConfigByUrl>,
 ) -> Option<LLMsConfig> {
@@ -193,6 +219,35 @@ pub fn get_llms_config_by_rustdoc_features(
 }
 
 #[napi]
+/// Get llms config by rustdoc with either all features or specific features
+///
+/// # Arguments
+///
+/// * `params` - Either a LLMsConfigRustdocByAllFeatures or LLMsConfigRustdocByFeatures object containing:
+///   - For all features: toolchain and manifest_path
+///   - For specific features: toolchain, manifest_path, no_default_features flag, and optional features list
+///
+/// # Returns
+///
+/// * `Option<LLMsConfig>` - The generated documentation configuration
+///
+/// # Examples
+///
+/// ```no_run
+/// // With all features
+/// let config = get_llms_config_by_rustdoc(Either::A(LLMsConfigRustdocByAllFeatures {
+///   toolchain: "stable".to_string(),
+///   manifest_path: "path/to/Cargo.toml".to_string()
+/// }));
+///
+/// // With specific features
+/// let config = get_llms_config_by_rustdoc(Either::B(LLMsConfigRustdocByFeatures {
+///   toolchain: "stable".to_string(),
+///   manifest_path: "path/to/Cargo.toml".to_string(),
+///   no_default_features: false,
+///   features: Some(vec!["async".to_string()])
+/// }));
+/// ```
 pub fn get_llms_config_by_rustdoc(
   params: Either<LLMsConfigRustdocByAllFeatures, LLMsConfigRustdocByFeatures>,
 ) -> Option<LLMsConfig> {
