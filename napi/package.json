@@ -65,7 +65,7 @@
   },
   "devDependencies": {
     "@inquirer/prompts": "^7.5.1",
-    "@napi-rs/cli": "3.0.0-alpha.87",
+    "@napi-rs/cli": "3.0.0",
     "@oxc-node/core": "^0.0.27",
     "@taplo/cli": "^0.7.0",
     "@types/node": "^22.15.21",
@@ -110,7 +110,7 @@
     "singleQuote": true,
     "arrowParens": "always"
   },
-  "packageManager": "pnpm@10.11.1",
+  "packageManager": "pnpm@10.13.1",
   "optionalDependencies": {
     "crates-llms-txt-napi-darwin-x64": "0.0.8",
     "crates-llms-txt-napi-darwin-arm64": "0.0.8",

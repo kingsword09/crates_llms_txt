@@ -186,7 +186,7 @@ version = "0.0.1"
 dependencies = [
  "crates_llms_txt",
  "napi",
- "napi-build",
+ "napi-build 3.0.0-beta.0",
  "napi-derive",
  "openssl-sys",
 ]
@@ -742,13 +742,13 @@ dependencies = [
 
 [[package]]
 name = "napi"
-version = "3.0.0-beta.7"
+version = "3.0.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "738f7ddf53c70b9bbddaf876317c985640a2c89061035fa87ff171fd93193e37"
+checksum = "abf3f418eeb94d86f02f3388324017e1e21e36937e4b1d8075ea5843d980f766"
 dependencies = [
  "bitflags",
  "ctor",
- "napi-build",
+ "napi-build 2.2.1",
  "napi-sys",
  "nohash-hasher",
  "rustc-hash",
@@ -762,10 +762,16 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "44e0e3177307063d3e7e55b7dd7b648cca9d7f46daa35422c0d98cc2bf48c2c1"
 
 [[package]]
-name = "napi-derive"
-version = "3.0.0-beta.6"
+name = "napi-build"
+version = "3.0.0-beta.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "1c48e8ab579e603cb66e0f9048303d25fca9f4275f421c0af150a40080bd299d"
+checksum = "42908a235da4c4a18c481eb5a8bb38570daa18581a68c508ca8efab662e38bc6"
+
+[[package]]
+name = "napi-derive"
+version = "3.0.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "ce09c2a155c7c38447a6ff1711899375bdd8f9dd5a50aad700a9c765c9f8a375"
 dependencies = [
  "convert_case",
  "ctor",
@@ -777,9 +783,9 @@ dependencies = [
 
 [[package]]
 name = "napi-derive-backend"
-version = "2.0.0-beta.6"
+version = "2.0.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "0a767a2d3aa9fe20f7032b9e90912e8061224dc48fcfd5a3e8716dbef8ba39a5"
+checksum = "17923387d68ecfe057a04a38ee89aeb41f415c43b4c7a508a3683bf0c1511c5a"
 dependencies = [
  "convert_case",
  "proc-macro2",
@@ -790,9 +796,9 @@ dependencies = [
 
 [[package]]
 name = "napi-sys"
-version = "3.0.0-alpha.3"
+version = "3.0.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "c4401c63f866b42d673a8b213d5662c84a0701b0f6c3acff7e2b9fc439f1675d"
+checksum = "3e4e7135a8f97aa0f1509cce21a8a1f9dcec1b50d8dee006b48a5adb69a9d64d"
 dependencies = [
  "libloading",
 ]
