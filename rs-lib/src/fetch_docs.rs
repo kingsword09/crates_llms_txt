@@ -54,7 +54,7 @@ impl OnlineDocs {
         println!("Content-Encoding is Zstd. Decompressing...");
         decompressed_bytes = zstd::decode_all(&body_bytes[..])?;
       } else {
-        println!("Content-Encoding is '{}', but we are only explicitly handling 'zstd'. Assuming reqwest handled it or it's plain.", encoding);
+        println!("Content-Encoding is '{encoding}', but we are only explicitly handling 'zstd'. Assuming reqwest handled it or it's plain.");
         decompressed_bytes = body_bytes.into_iter().collect(); // Convert Bytes to Vec<u8>
       }
     } else {
@@ -100,7 +100,7 @@ impl OnlineDocs {
     version: Option<String>,
   ) -> Result<rustdoc_types::Crate, Box<dyn Error>> {
     let version = version.unwrap_or("latest".to_string());
-    let url = format!("{}/{}/{}/json", DOCS_BASE_URL, lib_name, version);
+    let url = format!("{DOCS_BASE_URL}/{lib_name}/{version}/json");
     OnlineDocs::fetch_json::<rustdoc_types::Crate>(url.as_str()).await
   }
 

@@ -77,7 +77,7 @@ impl LLMsStandardConfig {
     config.sessions.push(SessionItem {
       title: lib_name.to_string(),
       description: "".to_string(),
-      link: format!("https://docs.rs/{}/{}", lib_name, version),
+      link: format!("https://docs.rs/{lib_name}/{version}"),
     });
 
     for (_, item) in docs.index() {
@@ -200,18 +200,23 @@ impl LLMsStandardConfig {
   ///
   /// ```no_run
   /// let config = LLMsStandardConfig::get_llms_config_offline_with_all_features(
-  ///     "stable",
   ///     PathBuf::from("path/to/Cargo.toml")
+  ///     Some("stable".to_string()),
   /// ).await?;
   /// ```
   #[cfg(feature = "rustdoc")]
   pub fn get_llms_config_offline_with_all_features(
-    toolchain: &str,
     manifest_path: PathBuf,
+    toolchain: Option<String>,
   ) -> Result<LLMsStandardStringConfig, Box<dyn Error>> {
-    if let Ok(gen_docs_struct) =
-      gen_docs::gen_docs_with_all_features(toolchain, manifest_path)
-    {
+    if let Ok(gen_docs_struct) = match toolchain {
+      Some(toolchain) => {
+        gen_docs::gen_docs_with_all_features(&toolchain, manifest_path)
+      }
+      None => {
+        gen_docs::gen_docs_with_all_features_auto_toolchain(manifest_path)
+      }
+    } {
       let lib_name = gen_docs_struct.lib_name;
       let docs = gen_docs_struct.docs;
       return LLMsStandardConfig::process_docs(&lib_name, docs, None);
@@ -237,25 +242,32 @@ impl LLMsStandardConfig {
   ///
   /// ```no_run
   /// let config = LLMsStandardConfig::get_llms_config_offline_with_features(
-  ///     "stable",
   ///     PathBuf::from("path/to/Cargo.toml"),
   ///     false,
   ///     Some(vec!["async".to_string()])
+  ///     Some("stable".to_string()),
   /// ).await?;
   /// ```
   #[cfg(feature = "rustdoc")]
   pub fn get_llms_config_offline_with_features(
-    toolchain: &str,
     manifest_path: PathBuf,
     no_default_features: bool,
     features: Option<Vec<String>>,
+    toolchain: Option<String>,
   ) -> Result<LLMsStandardStringConfig, Box<dyn Error>> {
-    if let Ok(gen_docs_struct) = gen_docs::gen_docs_with_features(
-      toolchain,
-      manifest_path,
-      no_default_features,
-      features,
-    ) {
+    if let Ok(gen_docs_struct) = match toolchain {
+      Some(toolchain) => gen_docs::gen_docs_with_features(
+        &toolchain,
+        manifest_path,
+        no_default_features,
+        features,
+      ),
+      None => gen_docs::gen_docs_with_features_auto_toolchain(
+        manifest_path,
+        no_default_features,
+        features,
+      ),
+    } {
       let lib_name = gen_docs_struct.lib_name;
       let docs = gen_docs_struct.docs;
       return LLMsStandardConfig::process_docs(&lib_name, docs, None);
@@ -268,6 +280,8 @@ impl LLMsStandardConfig {
 #[cfg(test)]
 mod tests {
   use super::*;
+  #[cfg(feature = "rustdoc")]
+  use std::path::PathBuf;
 
   #[tokio::test]
   async fn test_get_llms_config() {
@@ -290,11 +304,97 @@ mod tests {
     let lib_name = "crates_llms_txt";
     let current_dir = std::env::current_dir().unwrap();
     let config = LLMsStandardConfig::get_llms_config_offline_with_all_features(
-      "stable",
       current_dir.join("Cargo.toml"),
+      Some("stable".to_string()),
     )
     .unwrap();
-    println!("{:?}", config);
     assert_eq!(config.lib_name, lib_name);
+  }
+
+  #[cfg(feature = "rustdoc")]
+  #[test]
+  fn test_get_llms_config_offline_with_all_features_stable() {
+    let current_dir = std::env::current_dir().unwrap();
+    let manifest_path = current_dir.join("Cargo.toml");
+
+    let result = LLMsStandardConfig::get_llms_config_offline_with_all_features(
+      manifest_path.clone(),
+      Some("stable".to_string()),
+    );
+    assert!(result.is_ok());
+
+    let config = result.unwrap();
+    assert_eq!(config.lib_name, "crates_llms_txt");
+    assert!(!config.sessions.is_empty());
+    assert!(!config.full_sessions.is_empty());
+  }
+
+  #[cfg(feature = "rustdoc")]
+  #[test]
+  fn test_get_llms_config_offline_with_all_features_auto() {
+    let current_dir = std::env::current_dir().unwrap();
+    let manifest_path = current_dir.join("Cargo.toml");
+
+    let result = LLMsStandardConfig::get_llms_config_offline_with_all_features(
+      manifest_path.clone(),
+      None,
+    );
+    assert!(result.is_ok());
+
+    let config = result.unwrap();
+    assert_eq!(config.lib_name, "crates_llms_txt");
+    assert!(!config.sessions.is_empty());
+    assert!(!config.full_sessions.is_empty());
+  }
+
+  #[cfg(feature = "rustdoc")]
+  #[test]
+  fn test_get_llms_config_offline_invalid_path() {
+    let invalid_path = PathBuf::from("/invalid/path/Cargo.toml");
+    let result = LLMsStandardConfig::get_llms_config_offline_with_all_features(
+      invalid_path,
+      None,
+    );
+    assert!(result.is_err());
+  }
+
+  #[cfg(feature = "rustdoc")]
+  #[test]
+  fn test_get_llms_config_offline_with_features() {
+    let current_dir = std::env::current_dir().unwrap();
+    let manifest_path = current_dir.join("Cargo.toml");
+
+    // Test with specific features
+    let result = LLMsStandardConfig::get_llms_config_offline_with_features(
+      manifest_path.clone(),
+      false,
+      Some(vec!["rustdoc".to_string()]),
+      Some("stable".to_string()),
+    );
+    assert!(result.is_ok());
+
+    let config = result.unwrap();
+    assert_eq!(config.lib_name, "crates_llms_txt");
+    assert!(!config.sessions.is_empty());
+    assert!(!config.full_sessions.is_empty());
+
+    // Test with no default features
+    let result = LLMsStandardConfig::get_llms_config_offline_with_features(
+      manifest_path.clone(),
+      true,
+      None,
+      None,
+    );
+    assert!(result.is_ok());
+
+    // Test with invalid path
+    let invalid_path = PathBuf::from("/invalid/path/Cargo.toml");
+    let result = LLMsStandardConfig::get_llms_config_offline_with_features(
+      invalid_path,
+      false,
+      None,
+      None,
+    );
+    assert!(result.is_err());
   }
 }

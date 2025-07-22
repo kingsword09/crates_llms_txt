@@ -1,5 +1,3 @@
-#![deny(clippy::all)]
-
 use std::path::PathBuf;
 
 use crates_llms_txt::LLMsStandardConfig;
@@ -27,13 +25,13 @@ pub struct LLMsConfigByUrl {
 
 #[napi(object)]
 pub struct LLMsConfigRustdocByAllFeatures {
-  pub toolchain: String,
+  pub toolchain: Option<String>,
   pub manifest_path: String,
 }
 
 #[napi(object)]
 pub struct LLMsConfigRustdocByFeatures {
-  pub toolchain: String,
+  pub toolchain: Option<String>,
   pub manifest_path: String,
   pub no_default_features: bool,
   pub features: Option<Vec<String>>,
@@ -158,13 +156,13 @@ pub async fn get_llms_config_online(
 /// let config = get_llms_config_by_rustdoc_all_features("stable".to_string(), "path/to/Cargo.toml".to_string());
 /// ```
 pub fn get_llms_config_by_rustdoc_all_features(
-  toolchain: String,
   manifest_path: String,
+  toolchain: Option<String>,
 ) -> Option<LLMsConfig> {
   let manifest_path = PathBuf::from(manifest_path);
   match LLMsStandardConfig::get_llms_config_offline_with_all_features(
-    &toolchain,
     manifest_path,
+    toolchain,
   ) {
     Ok(config) => Some(LLMsConfig {
       lib_name: config.lib_name,
@@ -196,17 +194,17 @@ pub fn get_llms_config_by_rustdoc_all_features(
 /// let config = get_llms_config_by_rustdoc_features("stable".to_string(), "path/to/Cargo.toml".to_string(), false, Some(vec!["async".to_string()]));
 /// ```
 pub fn get_llms_config_by_rustdoc_features(
-  toolchain: String,
   manifest_path: String,
   no_default_features: bool,
   features: Option<Vec<String>>,
+  toolchain: Option<String>,
 ) -> Option<LLMsConfig> {
   let manifest_path = PathBuf::from(manifest_path);
   match LLMsStandardConfig::get_llms_config_offline_with_features(
-    &toolchain,
     manifest_path,
     no_default_features,
     features,
+    toolchain,
   ) {
     Ok(config) => Some(LLMsConfig {
       lib_name: config.lib_name,
@@ -253,14 +251,14 @@ pub fn get_llms_config_by_rustdoc(
 ) -> Option<LLMsConfig> {
   match params {
     Either::A(params) => get_llms_config_by_rustdoc_all_features(
-      params.toolchain,
       params.manifest_path,
+      params.toolchain,
     ),
     Either::B(params) => get_llms_config_by_rustdoc_features(
-      params.toolchain,
       params.manifest_path,
       params.no_default_features,
       params.features,
+      params.toolchain,
     ),
   }
 }
