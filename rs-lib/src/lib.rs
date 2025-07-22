@@ -7,6 +7,7 @@ use std::path::PathBuf;
 
 use temp_trait::CommonCrates;
 
+pub mod error;
 pub mod fetch_docs;
 #[cfg(feature = "rustdoc")]
 mod gen_docs;
@@ -209,20 +210,18 @@ impl LLMsStandardConfig {
     manifest_path: PathBuf,
     toolchain: Option<String>,
   ) -> Result<LLMsStandardStringConfig, Box<dyn Error>> {
-    if let Ok(gen_docs_struct) = match toolchain {
+    let gen_docs_struct = match toolchain {
       Some(toolchain) => {
-        gen_docs::gen_docs_with_all_features(&toolchain, manifest_path)
+        gen_docs::gen_docs_with_all_features(&toolchain, manifest_path)?
       }
       None => {
-        gen_docs::gen_docs_with_all_features_auto_toolchain(manifest_path)
+        gen_docs::gen_docs_with_all_features_auto_toolchain(manifest_path)?
       }
-    } {
-      let lib_name = gen_docs_struct.lib_name;
-      let docs = gen_docs_struct.docs;
-      return LLMsStandardConfig::process_docs(&lib_name, docs, None);
-    }
+    };
 
-    Err("Failed to get llms config".into())
+    let lib_name = gen_docs_struct.lib_name;
+    let docs = gen_docs_struct.docs;
+    return LLMsStandardConfig::process_docs(&lib_name, docs, None);
   }
 
   /// Generate documentation for a crate using offline mode with specified features enabled.
@@ -255,25 +254,23 @@ impl LLMsStandardConfig {
     features: Option<Vec<String>>,
     toolchain: Option<String>,
   ) -> Result<LLMsStandardStringConfig, Box<dyn Error>> {
-    if let Ok(gen_docs_struct) = match toolchain {
+    let gen_docs_struct = match toolchain {
       Some(toolchain) => gen_docs::gen_docs_with_features(
         &toolchain,
         manifest_path,
         no_default_features,
         features,
-      ),
+      )?,
       None => gen_docs::gen_docs_with_features_auto_toolchain(
         manifest_path,
         no_default_features,
         features,
-      ),
-    } {
-      let lib_name = gen_docs_struct.lib_name;
-      let docs = gen_docs_struct.docs;
-      return LLMsStandardConfig::process_docs(&lib_name, docs, None);
-    }
+      )?,
+    };
 
-    Err("Failed to get llms config".into())
+    let lib_name = gen_docs_struct.lib_name;
+    let docs = gen_docs_struct.docs;
+    return LLMsStandardConfig::process_docs(&lib_name, docs, None);
   }
 }
 

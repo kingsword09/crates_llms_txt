@@ -1,7 +1,7 @@
 use reqwest::header;
 use serde::{Deserialize, Serialize};
-use std::error::Error;
 
+use crate::error::{Error, Result};
 use crate::temp_trait::{CommonCrates, Crate};
 
 const DOCS_BASE_URL: &str = "https://docs.rs/crate";
@@ -32,7 +32,7 @@ impl OnlineDocs {
   /// }
   /// ```
   ///
-  pub async fn fetch_json<'a, T>(url: &str) -> Result<T, Box<dyn Error>>
+  pub async fn fetch_json<'a, T>(url: &str) -> Result<T>
   where
     T: CommonCrates + Serialize + Deserialize<'a>,
   {
@@ -52,7 +52,8 @@ impl OnlineDocs {
     if let Some(encoding) = content_encoding {
       if encoding.eq_ignore_ascii_case("zstd") {
         println!("Content-Encoding is Zstd. Decompressing...");
-        decompressed_bytes = zstd::decode_all(&body_bytes[..])?;
+        decompressed_bytes =
+          zstd::decode_all(&body_bytes[..]).map_err(|e| Error::Io(e))?;
       } else {
         println!("Content-Encoding is '{encoding}', but we are only explicitly handling 'zstd'. Assuming reqwest handled it or it's plain.");
         decompressed_bytes = body_bytes.into_iter().collect(); // Convert Bytes to Vec<u8>
@@ -64,8 +65,7 @@ impl OnlineDocs {
 
     // First try to parse as rustdoc_types::Crate
     let result =
-      serde_json::from_slice::<T>(&*Box::leak(Box::new(decompressed_bytes)))
-        .map_err(|e| Box::new(e) as Box<dyn Error>)?;
+      serde_json::from_slice::<T>(&*Box::leak(Box::new(decompressed_bytes)))?;
 
     // Return the parsed result
     Ok(result)
@@ -98,7 +98,7 @@ impl OnlineDocs {
   pub async fn fetch_docs(
     lib_name: &str,
     version: Option<String>,
-  ) -> Result<rustdoc_types::Crate, Box<dyn Error>> {
+  ) -> Result<rustdoc_types::Crate> {
     let version = version.unwrap_or("latest".to_string());
     let url = format!("{DOCS_BASE_URL}/{lib_name}/{version}/json");
     OnlineDocs::fetch_json::<rustdoc_types::Crate>(url.as_str()).await
@@ -127,7 +127,7 @@ impl OnlineDocs {
   /// }
   /// ```
   ///
-  pub async fn fetch_docs_by_url(url: &str) -> Result<Crate, Box<dyn Error>> {
+  pub async fn fetch_docs_by_url(url: &str) -> Result<Crate> {
     OnlineDocs::fetch_json::<Crate>(url).await
   }
 }

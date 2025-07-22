@@ -1,5 +1,6 @@
 use std::path::PathBuf;
 
+use crate::error::{Error, Result};
 use crate::temp_trait::Crate;
 
 #[derive(Debug, Clone)]
@@ -28,7 +29,7 @@ pub struct GenDocs {
 pub fn gen_docs_with_all_features(
   toolchain: &str,
   manifest_path: PathBuf,
-) -> Result<GenDocs, Box<dyn std::error::Error>> {
+) -> Result<GenDocs> {
   let json_path = match toolchain {
     "nightly" => rustdoc_json_stable::Builder::default(),
     _ => rustdoc_json_stable::Builder::stable(),
@@ -44,7 +45,8 @@ pub fn gen_docs_with_all_features(
     .file_stem()
     .and_then(|stem| stem.to_str())
     .map(String::from)
-    .ok_or("Failed to extract library name")?;
+    .ok_or("Failed to extract library name")
+    .map_err(|e| Error::Config(e.to_string()))?;
 
   let json_string = std::fs::read_to_string(&json_path)?;
   let json_data: Crate = serde_json::from_str(&json_string)?;
@@ -91,7 +93,8 @@ pub fn gen_docs_with_all_features_auto_toolchain(
     .file_stem()
     .and_then(|stem| stem.to_str())
     .map(String::from)
-    .ok_or("Failed to extract library name")?;
+    .ok_or("Failed to extract library name")
+    .map_err(|e| Error::Config(e.to_string()))?;
 
   let json_string = std::fs::read_to_string(&json_path)?;
   let json_data: Crate = serde_json::from_str(&json_string)?;
@@ -125,7 +128,7 @@ pub fn gen_docs_with_features(
   manifest_path: PathBuf,
   no_default_features: bool,
   features: Option<Vec<String>>,
-) -> Result<GenDocs, Box<dyn std::error::Error>> {
+) -> Result<GenDocs> {
   let mut builder = match toolchain {
     "nightly" => rustdoc_json_stable::Builder::default(),
     _ => rustdoc_json_stable::Builder::stable(),
@@ -148,7 +151,9 @@ pub fn gen_docs_with_features(
     .file_stem()
     .and_then(|stem| stem.to_str())
     .map(String::from)
-    .ok_or("Failed to extract library name")?;
+    .ok_or("Failed to extract library name")
+    .map_err(|e| Error::Config(e.to_string()))?;
+
   let json_string = std::fs::read_to_string(&json_path)?;
   let json_data: Crate = serde_json::from_str(&json_string)?;
 
@@ -187,7 +192,7 @@ pub fn gen_docs_with_features_auto_toolchain(
   manifest_path: PathBuf,
   no_default_features: bool,
   features: Option<Vec<String>>,
-) -> Result<GenDocs, Box<dyn std::error::Error>> {
+) -> Result<GenDocs> {
   let mut builder = match rustversion::cfg!(nightly) {
     true => rustdoc_json_stable::Builder::default().toolchain("nightly"),
     false => rustdoc_json_stable::Builder::stable().toolchain("stable"),
@@ -209,7 +214,9 @@ pub fn gen_docs_with_features_auto_toolchain(
     .file_stem()
     .and_then(|stem| stem.to_str())
     .map(String::from)
-    .ok_or("Failed to extract library name")?;
+    .ok_or("Failed to extract library name")
+    .map_err(|e| Error::Config(e.to_string()))?;
+
   let json_string = std::fs::read_to_string(&json_path)?;
   let json_data: Crate = serde_json::from_str(&json_string)?;
 
