@@ -78,7 +78,7 @@ pub fn gen_docs_with_all_features(
 /// ```
 pub fn gen_docs_with_all_features_auto_toolchain(
   manifest_path: PathBuf,
-) -> Result<GenDocs, Box<dyn std::error::Error>> {
+) -> Result<GenDocs> {
   let json_path = match rustversion::cfg!(nightly) {
     true => rustdoc_json_stable::Builder::default().toolchain("nightly"),
     false => rustdoc_json_stable::Builder::stable().toolchain("stable"),

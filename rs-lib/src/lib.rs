@@ -1,10 +1,11 @@
-use fetch_docs::OnlineDocs;
-use rustdoc_types::Visibility;
-use serde::{Deserialize, Serialize};
-use std::error::Error;
 #[cfg(feature = "rustdoc")]
 use std::path::PathBuf;
 
+use fetch_docs::OnlineDocs;
+use rustdoc_types::Visibility;
+use serde::{Deserialize, Serialize};
+
+use error::{Error, Result};
 use temp_trait::CommonCrates;
 
 pub mod error;
@@ -14,14 +15,6 @@ mod gen_docs;
 pub mod temp_trait;
 
 const DOCS_BASE_URL: &str = "https://docs.rs/crate";
-
-#[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct LLMsStandardStringConfig {
-  pub lib_name: String,
-  pub version: String,
-  pub sessions: String,
-  pub full_sessions: String,
-}
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct SessionItem {
@@ -37,14 +30,14 @@ pub struct FullSessionItem {
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct LLMsStandardConfig {
+pub struct CrateDocs {
   pub lib_name: String,
   pub version: String,
   pub sessions: Vec<SessionItem>,
   pub full_sessions: Vec<FullSessionItem>,
 }
 
-impl LLMsStandardConfig {
+impl CrateDocs {
   pub fn new(lib_name: &str, version: &str) -> Self {
     Self {
       lib_name: lib_name.to_string(),
@@ -54,28 +47,29 @@ impl LLMsStandardConfig {
     }
   }
 
-  /// Get the LLM config for a given crate and version.
+  /// Process documentation data for a given crate and version.
   ///
   /// # Arguments
   ///
   /// * `lib_name` - The name of the crate.
+  /// * `docs` - The documentation data implementing CommonCrates trait.
   /// * `version` - The version of the crate. If None, the latest version will be used.
   ///
   /// # Returns
   ///
-  /// * `Result<LLMsStandardConfig, Box<dyn Error>>` - The LLM config for the crate.
+  /// * `Result<CrateDocs, Error>` - The processed crate documentation.
   ///
   fn process_docs<T: CommonCrates>(
     lib_name: &str,
     docs: T,
     version: Option<String>,
-  ) -> Result<LLMsStandardStringConfig, Box<dyn Error>> {
+  ) -> Result<CrateDocs> {
     let version = version.unwrap_or(docs.crate_version());
-    let mut config = LLMsStandardConfig::new(lib_name, &version);
+    let mut crate_docs = CrateDocs::new(lib_name, &version);
     let base_url =
       format!("{}/{}/{}/source", DOCS_BASE_URL, &lib_name, version);
 
-    config.sessions.push(SessionItem {
+    crate_docs.sessions.push(SessionItem {
       title: lib_name.to_string(),
       description: "".to_string(),
       link: format!("https://docs.rs/{lib_name}/{version}"),
@@ -91,7 +85,7 @@ impl LLMsStandardConfig {
         let filename = item.span.unwrap().filename;
         let link = format!("{}/{}", base_url, filename.to_str().unwrap());
 
-        config.sessions.push(SessionItem {
+        crate_docs.sessions.push(SessionItem {
           title: match item.name {
             Some(name) => name,
             None => filename.to_str().unwrap().to_string(),
@@ -99,24 +93,17 @@ impl LLMsStandardConfig {
           description: "".to_string(),
           link: link.clone(),
         });
-        config.full_sessions.push(FullSessionItem {
+        crate_docs.full_sessions.push(FullSessionItem {
           content: docs,
           link,
         });
       };
     }
 
-    Ok(LLMsStandardStringConfig {
-      lib_name: config.lib_name,
-      version: config.version,
-      sessions: serde_json::to_string(&config.sessions)
-        .unwrap_or("".to_string()),
-      full_sessions: serde_json::to_string(&config.full_sessions)
-        .unwrap_or("".to_string()),
-    })
+    Ok(crate_docs)
   }
 
-  /// Get the LLM config for a given crate and version.
+  /// Fetch crate documentation from online docs.rs.
   ///
   /// # Arguments
   ///
@@ -125,91 +112,89 @@ impl LLMsStandardConfig {
   ///
   /// # Returns
   ///
-  /// * `Result<LLMsStandardConfig, Box<dyn std::error::Error>>` - The LLM config for the crate.
+  /// * `Result<CrateDocs, Error>` - The fetched crate documentation.
   ///
   /// # Examples
   ///
   /// ```no_run
-  /// use crates_llms_txt::LLMsStandardConfig;
+  /// use crates_llms_txt::CrateDocs;
   ///
   /// #[tokio::main]
   /// async fn main() -> Result<(), Box<dyn std::error::Error>> {
-  ///   let config = LLMsStandardConfig::get_llms_config_online("clap", Some("4.5.39".to_string())).await?;
+  ///   let docs = CrateDocs::from_online("clap", Some("4.5.39".to_string())).await?;
   ///   Ok(())
   /// }
   /// ```
   ///
-  pub async fn get_llms_config_online(
+  pub async fn from_online(
     lib_name: &str,
     version: Option<String>,
-  ) -> Result<LLMsStandardStringConfig, Box<dyn Error>> {
-    if let Ok(docs) = OnlineDocs::fetch_docs(lib_name, version.clone()).await {
-      return LLMsStandardConfig::process_docs(lib_name, docs, version);
-    }
-
-    Err("Failed to get llms config".into())
+  ) -> Result<CrateDocs> {
+    let docs = OnlineDocs::fetch_docs(lib_name, version.clone()).await?;
+    CrateDocs::process_docs(lib_name, docs, version)
   }
 
-  /// Get the LLM config for a given url.
+  /// Fetch crate documentation from a specific URL.
   ///
   /// # Arguments
   ///
-  /// * `url` - The url of the json.
+  /// * `url` - The URL of the documentation JSON.
   ///
   /// # Returns
   ///
-  /// * `Result<LLMsStandardConfig, Box<dyn Error>>` - The LLM config for the crate.
+  /// * `Result<CrateDocs, Error>` - The fetched crate documentation.
   ///
   /// # Examples
   ///
   /// ```no_run
-  /// use crates_llms_txt::LLMsStandardConfig;
+  /// use crates_llms_txt::CrateDocs;
   ///
   /// #[tokio::main]
   /// async fn main() -> Result<(), Box<dyn std::error::Error>> {
-  ///   let config = LLMsStandardConfig::get_llms_config_online_by_url("https://docs.rs/crate/clap/latest/json").await?;
+  ///   let docs = CrateDocs::from_url("https://docs.rs/crate/clap/latest/json").await?;
   ///   Ok(())
   /// }
   /// ```
   ///
-  pub async fn get_llms_config_online_by_url(
-    url: &str,
-  ) -> Result<LLMsStandardStringConfig, Box<dyn Error>> {
-    if let Ok(docs) = OnlineDocs::fetch_docs_by_url(url).await {
-      let root_id = docs.root;
-      if let Some(root_item) = docs.clone().index.get(&root_id) {
-        let lib_name = &root_item.name.clone().unwrap_or("unknown".to_string());
-        return LLMsStandardConfig::process_docs(lib_name, docs, None);
-      }
+  pub async fn from_url(url: &str) -> Result<CrateDocs> {
+    let docs = OnlineDocs::fetch_docs_by_url(url).await?;
+    let root_id = docs.root;
+
+    if let Some(root_item) = docs.clone().index.get(&root_id) {
+      let lib_name = &root_item.name.clone().unwrap_or("unknown".to_string());
+      return CrateDocs::process_docs(lib_name, docs, None);
     }
 
-    Err("Failed to get llms config".into())
+    Err(Error::Config("Failed to get crate docs".into()))
   }
 
-  /// Generate documentation for a crate using offline mode with all features enabled.
+  /// Generate documentation for a crate using local mode with all features enabled.
   ///
   /// # Arguments
   ///
-  /// * `toolchain` - The Rust toolchain to use (e.g. "stable", "nightly")
   /// * `manifest_path` - Path to the Cargo.toml file of the crate
+  /// * `toolchain` - The Rust toolchain to use (e.g. "stable", "nightly")
   ///
   /// # Returns
   ///
-  /// * `Result<LLMsStandardStringConfig, Box<dyn Error>>` - The generated documentation config
+  /// * `Result<CrateDocs, Error>` - The generated crate documentation
   ///
   /// # Examples
   ///
   /// ```no_run
-  /// let config = LLMsStandardConfig::get_llms_config_offline_with_all_features(
-  ///     PathBuf::from("path/to/Cargo.toml")
+  /// use std::path::PathBuf;
+  /// use crates_llms_txt::CrateDocs;
+  /// 
+  /// let docs = CrateDocs::from_local(
+  ///     PathBuf::from("path/to/Cargo.toml"),
   ///     Some("stable".to_string()),
-  /// ).await?;
+  /// )?;
   /// ```
   #[cfg(feature = "rustdoc")]
-  pub fn get_llms_config_offline_with_all_features(
+  pub fn from_local(
     manifest_path: PathBuf,
     toolchain: Option<String>,
-  ) -> Result<LLMsStandardStringConfig, Box<dyn Error>> {
+  ) -> Result<CrateDocs> {
     let gen_docs_struct = match toolchain {
       Some(toolchain) => {
         gen_docs::gen_docs_with_all_features(&toolchain, manifest_path)?
@@ -221,39 +206,42 @@ impl LLMsStandardConfig {
 
     let lib_name = gen_docs_struct.lib_name;
     let docs = gen_docs_struct.docs;
-    return LLMsStandardConfig::process_docs(&lib_name, docs, None);
+    return CrateDocs::process_docs(&lib_name, docs, None);
   }
 
-  /// Generate documentation for a crate using offline mode with specified features enabled.
+  /// Generate documentation for a crate using local mode with specified features enabled.
   ///
   /// # Arguments
   ///
-  /// * `toolchain` - The Rust toolchain to use (e.g. "stable", "nightly")
   /// * `manifest_path` - Path to the Cargo.toml file of the crate
   /// * `no_default_features` - Whether to disable the default features
   /// * `features` - List of features to enable
+  /// * `toolchain` - The Rust toolchain to use (e.g. "stable", "nightly")
   ///
   /// # Returns
   ///
-  /// * `Result<LLMsStandardStringConfig, Box<dyn Error>>` - The generated documentation config
+  /// * `Result<CrateDocs, Error>` - The generated crate documentation
   ///
   /// # Examples
   ///
   /// ```no_run
-  /// let config = LLMsStandardConfig::get_llms_config_offline_with_features(
+  /// use std::path::PathBuf;
+  /// use crates_llms_txt::CrateDocs;
+  /// 
+  /// let docs = CrateDocs::from_local_with_features(
   ///     PathBuf::from("path/to/Cargo.toml"),
   ///     false,
-  ///     Some(vec!["async".to_string()])
+  ///     Some(vec!["async".to_string()]),
   ///     Some("stable".to_string()),
-  /// ).await?;
+  /// )?;
   /// ```
   #[cfg(feature = "rustdoc")]
-  pub fn get_llms_config_offline_with_features(
+  pub fn from_local_with_features(
     manifest_path: PathBuf,
     no_default_features: bool,
     features: Option<Vec<String>>,
     toolchain: Option<String>,
-  ) -> Result<LLMsStandardStringConfig, Box<dyn Error>> {
+  ) -> Result<CrateDocs> {
     let gen_docs_struct = match toolchain {
       Some(toolchain) => gen_docs::gen_docs_with_features(
         &toolchain,
@@ -270,7 +258,7 @@ impl LLMsStandardConfig {
 
     let lib_name = gen_docs_struct.lib_name;
     let docs = gen_docs_struct.docs;
-    return LLMsStandardConfig::process_docs(&lib_name, docs, None);
+    return CrateDocs::process_docs(&lib_name, docs, None);
   }
 }
 
@@ -281,88 +269,79 @@ mod tests {
   use std::path::PathBuf;
 
   #[tokio::test]
-  async fn test_get_llms_config() {
+  async fn test_from_online() {
     let lib_name = "clap";
     let version = "4.5.39".to_string();
-    let config = LLMsStandardConfig::get_llms_config_online(
-      lib_name,
-      Some(version.clone()),
-    )
-    .await
-    .unwrap();
+    let docs = CrateDocs::from_online(lib_name, Some(version.clone()))
+      .await
+      .unwrap();
 
-    assert_eq!(config.lib_name, lib_name);
-    assert_eq!(config.version, version);
+    assert_eq!(docs.lib_name, lib_name);
+    assert_eq!(docs.version, version);
+    assert!(!docs.sessions.is_empty());
   }
 
   #[cfg(feature = "rustdoc")]
   #[test]
-  fn test_get_llms_config_offline_with_all_features() {
+  fn test_from_local_with_all_features() {
     let lib_name = "crates_llms_txt";
     let current_dir = std::env::current_dir().unwrap();
-    let config = LLMsStandardConfig::get_llms_config_offline_with_all_features(
+    let docs = CrateDocs::from_local(
       current_dir.join("Cargo.toml"),
       Some("stable".to_string()),
     )
     .unwrap();
-    assert_eq!(config.lib_name, lib_name);
+    assert_eq!(docs.lib_name, lib_name);
+    assert!(!docs.sessions.is_empty());
   }
 
   #[cfg(feature = "rustdoc")]
   #[test]
-  fn test_get_llms_config_offline_with_all_features_stable() {
+  fn test_from_local_with_stable_toolchain() {
     let current_dir = std::env::current_dir().unwrap();
     let manifest_path = current_dir.join("Cargo.toml");
 
-    let result = LLMsStandardConfig::get_llms_config_offline_with_all_features(
-      manifest_path.clone(),
-      Some("stable".to_string()),
-    );
+    let result =
+      CrateDocs::from_local(manifest_path.clone(), Some("stable".to_string()));
     assert!(result.is_ok());
 
-    let config = result.unwrap();
-    assert_eq!(config.lib_name, "crates_llms_txt");
-    assert!(!config.sessions.is_empty());
-    assert!(!config.full_sessions.is_empty());
+    let docs = result.unwrap();
+    assert_eq!(docs.lib_name, "crates_llms_txt");
+    assert!(!docs.sessions.is_empty());
+    assert!(!docs.full_sessions.is_empty());
   }
 
   #[cfg(feature = "rustdoc")]
   #[test]
-  fn test_get_llms_config_offline_with_all_features_auto() {
+  fn test_from_local_with_auto_toolchain() {
     let current_dir = std::env::current_dir().unwrap();
     let manifest_path = current_dir.join("Cargo.toml");
 
-    let result = LLMsStandardConfig::get_llms_config_offline_with_all_features(
-      manifest_path.clone(),
-      None,
-    );
+    let result = CrateDocs::from_local(manifest_path.clone(), None);
     assert!(result.is_ok());
 
-    let config = result.unwrap();
-    assert_eq!(config.lib_name, "crates_llms_txt");
-    assert!(!config.sessions.is_empty());
-    assert!(!config.full_sessions.is_empty());
+    let docs = result.unwrap();
+    assert_eq!(docs.lib_name, "crates_llms_txt");
+    assert!(!docs.sessions.is_empty());
+    assert!(!docs.full_sessions.is_empty());
   }
 
   #[cfg(feature = "rustdoc")]
   #[test]
-  fn test_get_llms_config_offline_invalid_path() {
+  fn test_from_local_invalid_path() {
     let invalid_path = PathBuf::from("/invalid/path/Cargo.toml");
-    let result = LLMsStandardConfig::get_llms_config_offline_with_all_features(
-      invalid_path,
-      None,
-    );
+    let result = CrateDocs::from_local(invalid_path, None);
     assert!(result.is_err());
   }
 
   #[cfg(feature = "rustdoc")]
   #[test]
-  fn test_get_llms_config_offline_with_features() {
+  fn test_from_local_with_features() {
     let current_dir = std::env::current_dir().unwrap();
     let manifest_path = current_dir.join("Cargo.toml");
 
     // Test with specific features
-    let result = LLMsStandardConfig::get_llms_config_offline_with_features(
+    let result = CrateDocs::from_local_with_features(
       manifest_path.clone(),
       false,
       Some(vec!["rustdoc".to_string()]),
@@ -370,13 +349,13 @@ mod tests {
     );
     assert!(result.is_ok());
 
-    let config = result.unwrap();
-    assert_eq!(config.lib_name, "crates_llms_txt");
-    assert!(!config.sessions.is_empty());
-    assert!(!config.full_sessions.is_empty());
+    let docs = result.unwrap();
+    assert_eq!(docs.lib_name, "crates_llms_txt");
+    assert!(!docs.sessions.is_empty());
+    assert!(!docs.full_sessions.is_empty());
 
     // Test with no default features
-    let result = LLMsStandardConfig::get_llms_config_offline_with_features(
+    let result = CrateDocs::from_local_with_features(
       manifest_path.clone(),
       true,
       None,
@@ -386,12 +365,8 @@ mod tests {
 
     // Test with invalid path
     let invalid_path = PathBuf::from("/invalid/path/Cargo.toml");
-    let result = LLMsStandardConfig::get_llms_config_offline_with_features(
-      invalid_path,
-      false,
-      None,
-      None,
-    );
+    let result =
+      CrateDocs::from_local_with_features(invalid_path, false, None, None);
     assert!(result.is_err());
   }
 }
