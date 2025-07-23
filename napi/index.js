@@ -82,6 +82,7 @@ function requireNative() {
       } catch (e) {
         loadErrors.push(e)
       }
+
     } else if (process.arch === 'arm') {
       try {
         return require('./crates-llms-txt.android-arm-eabi.node')
@@ -93,6 +94,7 @@ function requireNative() {
       } catch (e) {
         loadErrors.push(e)
       }
+
     } else {
       loadErrors.push(new Error(`Unsupported architecture on Android ${process.arch}`))
     }
@@ -108,6 +110,7 @@ function requireNative() {
       } catch (e) {
         loadErrors.push(e)
       }
+
     } else if (process.arch === 'ia32') {
       try {
         return require('./crates-llms-txt.win32-ia32-msvc.node')
@@ -119,6 +122,7 @@ function requireNative() {
       } catch (e) {
         loadErrors.push(e)
       }
+
     } else if (process.arch === 'arm64') {
       try {
         return require('./crates-llms-txt.win32-arm64-msvc.node')
@@ -130,20 +134,22 @@ function requireNative() {
       } catch (e) {
         loadErrors.push(e)
       }
+
     } else {
       loadErrors.push(new Error(`Unsupported architecture on Windows: ${process.arch}`))
     }
   } else if (process.platform === 'darwin') {
     try {
-      return require('./crates-llms-txt.darwin-universal.node')
-    } catch (e) {
-      loadErrors.push(e)
-    }
-    try {
-      return require('crates-llms-txt-napi-darwin-universal')
-    } catch (e) {
-      loadErrors.push(e)
-    }
+        return require('./crates-llms-txt.darwin-universal.node')
+      } catch (e) {
+        loadErrors.push(e)
+      }
+      try {
+        return require('crates-llms-txt-napi-darwin-universal')
+      } catch (e) {
+        loadErrors.push(e)
+      }
+
     if (process.arch === 'x64') {
       try {
         return require('./crates-llms-txt.darwin-x64.node')
@@ -155,6 +161,7 @@ function requireNative() {
       } catch (e) {
         loadErrors.push(e)
       }
+
     } else if (process.arch === 'arm64') {
       try {
         return require('./crates-llms-txt.darwin-arm64.node')
@@ -166,6 +173,7 @@ function requireNative() {
       } catch (e) {
         loadErrors.push(e)
       }
+
     } else {
       loadErrors.push(new Error(`Unsupported architecture on macOS: ${process.arch}`))
     }
@@ -181,6 +189,7 @@ function requireNative() {
       } catch (e) {
         loadErrors.push(e)
       }
+
     } else if (process.arch === 'arm64') {
       try {
         return require('./crates-llms-txt.freebsd-arm64.node')
@@ -192,6 +201,7 @@ function requireNative() {
       } catch (e) {
         loadErrors.push(e)
       }
+
     } else {
       loadErrors.push(new Error(`Unsupported architecture on FreeBSD: ${process.arch}`))
     }
@@ -199,98 +209,106 @@ function requireNative() {
     if (process.arch === 'x64') {
       if (isMusl()) {
         try {
-          return require('./crates-llms-txt.linux-x64-musl.node')
-        } catch (e) {
-          loadErrors.push(e)
-        }
-        try {
-          return require('crates-llms-txt-napi-linux-x64-musl')
-        } catch (e) {
-          loadErrors.push(e)
-        }
+        return require('./crates-llms-txt.linux-x64-musl.node')
+      } catch (e) {
+        loadErrors.push(e)
+      }
+      try {
+        return require('crates-llms-txt-napi-linux-x64-musl')
+      } catch (e) {
+        loadErrors.push(e)
+      }
+
       } else {
         try {
-          return require('./crates-llms-txt.linux-x64-gnu.node')
-        } catch (e) {
-          loadErrors.push(e)
-        }
-        try {
-          return require('crates-llms-txt-napi-linux-x64-gnu')
-        } catch (e) {
-          loadErrors.push(e)
-        }
+        return require('./crates-llms-txt.linux-x64-gnu.node')
+      } catch (e) {
+        loadErrors.push(e)
+      }
+      try {
+        return require('crates-llms-txt-napi-linux-x64-gnu')
+      } catch (e) {
+        loadErrors.push(e)
+      }
+
       }
     } else if (process.arch === 'arm64') {
       if (isMusl()) {
         try {
-          return require('./crates-llms-txt.linux-arm64-musl.node')
-        } catch (e) {
-          loadErrors.push(e)
-        }
-        try {
-          return require('crates-llms-txt-napi-linux-arm64-musl')
-        } catch (e) {
-          loadErrors.push(e)
-        }
+        return require('./crates-llms-txt.linux-arm64-musl.node')
+      } catch (e) {
+        loadErrors.push(e)
+      }
+      try {
+        return require('crates-llms-txt-napi-linux-arm64-musl')
+      } catch (e) {
+        loadErrors.push(e)
+      }
+
       } else {
         try {
-          return require('./crates-llms-txt.linux-arm64-gnu.node')
-        } catch (e) {
-          loadErrors.push(e)
-        }
-        try {
-          return require('crates-llms-txt-napi-linux-arm64-gnu')
-        } catch (e) {
-          loadErrors.push(e)
-        }
+        return require('./crates-llms-txt.linux-arm64-gnu.node')
+      } catch (e) {
+        loadErrors.push(e)
+      }
+      try {
+        return require('crates-llms-txt-napi-linux-arm64-gnu')
+      } catch (e) {
+        loadErrors.push(e)
+      }
+
       }
     } else if (process.arch === 'arm') {
       if (isMusl()) {
         try {
-          return require('./crates-llms-txt.linux-arm-musleabihf.node')
-        } catch (e) {
-          loadErrors.push(e)
-        }
-        try {
-          return require('crates-llms-txt-napi-linux-arm-musleabihf')
-        } catch (e) {
-          loadErrors.push(e)
-        }
+        return require('./crates-llms-txt.linux-arm-musleabihf.node')
+      } catch (e) {
+        loadErrors.push(e)
+      }
+      try {
+        return require('crates-llms-txt-napi-linux-arm-musleabihf')
+      } catch (e) {
+        loadErrors.push(e)
+      }
+
       } else {
         try {
-          return require('./crates-llms-txt.linux-arm-gnueabihf.node')
-        } catch (e) {
-          loadErrors.push(e)
-        }
-        try {
-          return require('crates-llms-txt-napi-linux-arm-gnueabihf')
-        } catch (e) {
-          loadErrors.push(e)
-        }
+        return require('./crates-llms-txt.linux-arm-gnueabihf.node')
+      } catch (e) {
+        loadErrors.push(e)
+      }
+      try {
+        return require('crates-llms-txt-napi-linux-arm-gnueabihf')
+      } catch (e) {
+        loadErrors.push(e)
+      }
+
       }
     } else if (process.arch === 'riscv64') {
       if (isMusl()) {
         try {
-          return require('./crates-llms-txt.linux-riscv64-musl.node')
-        } catch (e) {
-          loadErrors.push(e)
-        }
-        try {
-          return require('crates-llms-txt-napi-linux-riscv64-musl')
-        } catch (e) {
-          loadErrors.push(e)
-        }
+        return require('./crates-llms-txt.linux-riscv64-musl.node')
+      } catch (e) {
+        loadErrors.push(e)
+      }
+      try {
+        return require('crates-llms-txt-napi-linux-riscv64-musl')
+      } catch (e) {
+        loadErrors.push(e)
+      }
+
       } else {
         try {
-          return require('./crates-llms-txt.linux-riscv64-gnu.node')
-        } catch (e) {
-          loadErrors.push(e)
-        }
-        try {
-          return require('crates-llms-txt-napi-linux-riscv64-gnu')
-        } catch (e) {
-          loadErrors.push(e)
-        }
+        return require('./crates-llms-txt.linux-riscv64-gnu.node')
+      } catch (e) {
+        loadErrors.push(e)
+      }
+      try {
+        return require('crates-llms-txt-napi-linux-riscv64-gnu')
+      } catch (e) {
+        loadErrors.push(e)
+      }
+
       }
     } else if (process.arch === 'ppc64') {
       try {
@@ -303,6 +321,7 @@ function requireNative() {
       } catch (e) {
         loadErrors.push(e)
       }
+
     } else if (process.arch === 's390x') {
       try {
         return require('./crates-llms-txt.linux-s390x-gnu.node')
@@ -314,45 +333,9 @@ function requireNative() {
       } catch (e) {
         loadErrors.push(e)
       }
+
     } else {
       loadErrors.push(new Error(`Unsupported architecture on Linux: ${process.arch}`))
-    }
-  } else if (process.platform === 'openharmony') {
-    if (process.arch === 'arm64') {
-      try {
-        return require('./crates-llms-txt.linux-arm64-ohos.node')
-      } catch (e) {
-        loadErrors.push(e)
-      }
-      try {
-        return require('crates-llms-txt-napi-linux-arm64-ohos')
-      } catch (e) {
-        loadErrors.push(e)
-      }
-    } else if (process.arch === 'x64') {
-      try {
-        return require('./crates-llms-txt.linux-x64-ohos.node')
-      } catch (e) {
-        loadErrors.push(e)
-      }
-      try {
-        return require('crates-llms-txt-napi-linux-x64-ohos')
-      } catch (e) {
-        loadErrors.push(e)
-      }
-    } else if (process.arch === 'arm') {
-      try {
-        return require('./crates-llms-txt.linux-arm-ohos.node')
-      } catch (e) {
-        loadErrors.push(e)
-      }
-      try {
-        return require('crates-llms-txt-napi-linux-arm-ohos')
-      } catch (e) {
-        loadErrors.push(e)
-      }
-    } else {
-      loadErrors.push(new Error(`Unsupported architecture on OpenHarmony: ${process.arch}`))
     }
   } else {
     loadErrors.push(new Error(`Unsupported OS: ${process.platform}, architecture: ${process.arch}`))
@@ -382,17 +365,20 @@ if (!nativeBinding || process.env.NAPI_RS_FORCE_WASI) {
 
 if (!nativeBinding) {
   if (loadErrors.length > 0) {
-    throw new Error(
-      `Cannot find native binding. ` +
-        `npm has a bug related to optional dependencies (https://github.com/npm/cli/issues/4828). ` +
-        'Please try `npm i` again after removing both package-lock.json and node_modules directory.',
-      { cause: loadErrors }
-    )
+    // TODO Link to documentation with potential fixes
+    //  - The package owner could build/publish bindings for this arch
+    //  - The user may need to bundle the correct files
+    //  - The user may need to re-install node_modules to get new packages
+    throw new Error('Failed to load native binding', { cause: loadErrors })
   }
   throw new Error(`Failed to load native binding`)
 }
 
 module.exports = nativeBinding
+module.exports.fromLocal = nativeBinding.fromLocal
+module.exports.fromLocalWithFeatures = nativeBinding.fromLocalWithFeatures
+module.exports.fromOnline = nativeBinding.fromOnline
+module.exports.fromUrl = nativeBinding.fromUrl
 module.exports.getLlmsConfigByRustdoc = nativeBinding.getLlmsConfigByRustdoc
 module.exports.getLlmsConfigByRustdocAllFeatures = nativeBinding.getLlmsConfigByRustdocAllFeatures
 module.exports.getLlmsConfigByRustdocFeatures = nativeBinding.getLlmsConfigByRustdocFeatures

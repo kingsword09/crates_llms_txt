@@ -18,15 +18,15 @@ const DOCS_BASE_URL: &str = "https://docs.rs/crate";
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct SessionItem {
-  title: String,
-  description: String,
-  link: String,
+  pub title: String,
+  pub description: String,
+  pub link: String,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct FullSessionItem {
-  content: String,
-  link: String,
+  pub content: String,
+  pub link: String,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]

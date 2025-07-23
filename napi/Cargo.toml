@@ -10,8 +10,8 @@ version = "0.0.1"
 crate-type = ["cdylib"]
 
 [dependencies]
-napi = { version = "3.0.0", default-features = false,features = ["async", "napi3"] }
-napi-derive = "3.0.0"
+napi = { version = "3.1.2", default-features = false,features = ["async", "napi3"] }
+napi-derive = "3.1.1"
 crates_llms_txt = { path = "../rs-lib", features = ["rustdoc"] }
 
 [target.armv7-unknown-linux-gnueabihf.dependencies]
