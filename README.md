@@ -2,8 +2,6 @@
 
 [![Crates.io][crates-src]][crates-href]
 [![crates downloads][crates-download-src]][crates-download-href]
-[![napi version][npm-napi-version-src]][npm-napi-version-href]
-[![napi downloads][npm-napi-downloads-src]][npm-napi-downloads-href]
 [![npm version][npm-version-src]][npm-version-href]
 [![npm downloads][npm-downloads-src]][npm-downloads-href]
 [![License][license-src]][license-href]
@@ -12,7 +10,7 @@ A repository for generating content for `llms.txt` and `llms-full.txt` files use
 
 ## Package Distribution
 
-This repository provides three main distribution formats/packages:
+This repository provides two main distribution formats/packages:
 
 ### Rust Library: `crates_llms_txt`
 
@@ -109,7 +107,7 @@ For detailed API usage, including the top-level helper functions, please refer t
 
 ### NAPI Package: `crates-llms-txt-napi`
 
-The `crates-llms-txt-napi` library is the JS/TS implementation, distributed via npm.
+The `crates-llms-txt-napi` library is the Node.js/TypeScript implementation, distributed via npm.
 
 - **NPM Package:** [crates-llms-txt-napi](https://www.npmjs.com/package/crates-llms-txt-napi)
 - **Source:** `napi/`
@@ -118,9 +116,11 @@ The `crates-llms-txt-napi` library is the JS/TS implementation, distributed via 
 
 **Features:**
 
-- Fetches documentation and session data for any Rust crate by name and version.
-- Returns a unified configuration object for LLM consumption.
-- TypeScript type definitions included.
+- Generate metadata for `llms.txt` and `llms-full.txt` files
+- Parse Rust crate documentation into standardized formats
+- Support both online (docs.rs) and local crate documentation
+- Enable custom feature selection for local documentation generation
+- Cross-platform support with prebuilt binaries
 
 **Installation:**
 
@@ -128,65 +128,120 @@ The `crates-llms-txt-napi` library is the JS/TS implementation, distributed via 
 npm install crates-llms-txt-napi
 ```
 
-**Usage Example:**
+**Usage Examples:**
 
 ```typescript
-import { getLlmsConfigOnlineByCratesName } from "crates-llms-txt-napi";
+import { fromCrateName, fromLocal, fromLocalWithFeatures } from 'crates-llms-txt-napi'
 
-async function main() {
-  const config = await getLlmsConfigOnlineByCratesName("clap", "4.5.39");
-}
+// Fetch latest version from docs.rs
+const config = await fromCrateName('clap')
 
-main();
+// Fetch specific version
+const specificConfig = await fromCrateName('clap', '4.5.39')
+
+// Generate local documentation with all features
+const localConfig = fromLocal('./Cargo.toml', 'stable')
+
+// Generate with specific features
+const customConfig = fromLocalWithFeatures(
+  './Cargo.toml',
+  true, // no default features
+  ['async', 'serde'], // specific features
+  'nightly' // toolchain
+)
 ```
 
-**API:**
+**API Reference:**
 
-#### `getLlmsConfigOnlineByCratesName(libName: string, version?: string): Promise<LlMsConfig | null>`
+#### Online Documentation Functions
 
-Fetches the standard configuration for a given Rust crate and version from online sources (docs.rs).
+##### `fromCrateName(libName: string, version?: string): Promise<LLMsConfig | null>`
 
-- `libName: string`: The name of the crate (e.g., "clap").
-- `version?: string`: The version string (optional, if not provided or `undefined`, the latest version of the crate will be attempted).
-- **Returns:** `Promise<LlMsConfig | null>` - A promise that resolves to the `LlMsConfig` object or `null` if an error occurs (e.g., crate not found, network issue).
+Fetches Rust crate documentation from docs.rs by crate name and version.
 
-#### `getLlmsConfigOnlineByUrl(url: string): Promise<LlMsConfig | null>`
+- `libName: string`: The name of the crate as it appears on crates.io
+- `version?: string`: Optional version string. If not provided, the latest version will be fetched
+- **Returns:** `Promise<LLMsConfig | null>` - Documentation configuration or null if failed
 
-Fetches the standard configuration for a Rust crate by providing a direct URL to its `docs.rs` JSON documentation file.
+##### `fromUrl(url: string): Promise<LLMsConfig | null>`
 
-- `url: string`: The direct URL to the crate's JSON documentation index (e.g., "https://docs.rs/crate/clap/latest/json").
-- **Returns:** `Promise<LlMsConfig | null>` - A promise that resolves to the `LlMsConfig` object or `null` if an error occurs (e.g., URL not reachable, invalid JSON).
+Fetches documentation from a direct URL to the JSON documentation.
 
-#### `getLlmsConfigByRustdocAllFeatures(toolchain: string, manifestPath: string): LlMsConfig | null`
+- `url: string`: Direct URL to the crate's JSON documentation
+- **Returns:** `Promise<LLMsConfig | null>` - Documentation configuration or null if failed
 
-Generates the LLM configuration for a local Rust crate by invoking `cargo doc` with all features enabled. This function requires a local Rust toolchain.
+##### `fromOnline(params: LLMsConfigByCrate | LLMsConfigByUrl): Promise<LLMsConfig | null>`
 
-- `toolchain: string`: The Rust toolchain to use (e.g., "stable", "nightly").
-- `manifestPath: string`: Absolute or relative path to the `Cargo.toml` file of the local crate.
-- **Returns:** `LlMsConfig | null` - The `LlMsConfig` object or `null` if an error occurs during documentation generation.
+Unified function for fetching documentation from online sources.
 
-#### `getLlmsConfigByRustdocFeatures(toolchain: string, manifestPath: string, noDefaultFeatures: boolean, features?: string[]): LlMsConfig | null`
+- `params`: Either `{ libName: string, version?: string }` or `{ url: string }`
+- **Returns:** `Promise<LLMsConfig | null>` - Documentation configuration or null if failed
 
-Generates the LLM configuration for a local Rust crate by invoking `cargo doc` with specified features. This function requires a local Rust toolchain.
+#### Local Documentation Functions
 
-- `toolchain: string`: The Rust toolchain to use (e.g., "stable", "nightly").
-- `manifestPath: string`: Absolute or relative path to the `Cargo.toml` file of the local crate.
-- `noDefaultFeatures: boolean`: If `true`, disables the default features of the crate.
-- `features?: string[]`: An optional list of features to enable.
-- **Returns:** `LlMsConfig | null` - The `LlMsConfig` object or `null` if an error occurs during documentation generation.
+##### `fromLocal(manifestPath: string, toolchain?: string): LLMsConfig | null`
 
-**`LlMsConfig` Type:**
+Generates documentation for a local crate with all features enabled.
+
+- `manifestPath: string`: Path to the Cargo.toml file
+- `toolchain?: string`: Optional Rust toolchain (e.g., "stable", "nightly")
+- **Returns:** `LLMsConfig | null` - Documentation configuration or null if failed
+
+##### `fromLocalWithFeatures(manifestPath: string, noDefaultFeatures: boolean, features?: string[], toolchain?: string): LLMsConfig | null`
+
+Generates documentation with fine-grained feature control.
+
+- `manifestPath: string`: Path to the Cargo.toml file
+- `noDefaultFeatures: boolean`: Whether to disable default features
+- `features?: string[]`: Optional array of features to enable
+- `toolchain?: string`: Optional Rust toolchain
+- **Returns:** `LLMsConfig | null` - Documentation configuration or null if failed
+
+##### `fromLocalByRustdoc(params: LLMsConfigRustdocByAllFeatures | LLMsConfigRustdocByFeatures): LLMsConfig | null`
+
+Unified function for local documentation generation with flexible configuration.
+
+**TypeScript Types:**
 
 ```typescript
-type SessionItem = { title: string; description: string; link: string };
-type FullSessionItem = { content: string; link: string };
+interface SessionItem {
+  title: string
+  description: string
+  link: string
+}
 
-export type LlMsConfig = {
-  libName: string;
-  version: string;
-  sessions: string /*SessionItem[]*/;
-  fullSessions: string /*FullSessionItem[]*/;
-};
+interface FullSessionItem {
+  content: string
+  link: string
+}
+
+interface LLMsConfig {
+  libName: string
+  version: string
+  sessions: SessionItem[]
+  fullSessions: FullSessionItem[]
+}
+
+interface LLMsConfigByCrate {
+  libName: string
+  version?: string
+}
+
+interface LLMsConfigByUrl {
+  url: string
+}
+
+interface LLMsConfigRustdocByAllFeatures {
+  toolchain?: string
+  manifestPath: string
+}
+
+interface LLMsConfigRustdocByFeatures {
+  toolchain?: string
+  manifestPath: string
+  noDefaultFeatures: boolean
+  features?: string[]
+}
 ```
 
 #### Supported Architectures
@@ -206,116 +261,7 @@ The `crates-llms-txt-napi` package provides prebuilt binaries for the following 
 | `aarch64-unknown-linux-musl`    |
 | `armv7-unknown-linux-gnueabihf` |
 
-### NPM Package: `crates-llms-txt`
 
-This is a higher-level JavaScript/TypeScript wrapper over the `crates-llms-txt-napi` package. It provides a more user-friendly interface by automatically parsing the JSON strings for `sessions` and `fullSessions` into structured JavaScript objects.
-
-- **NPM Package:** [crates-llms-txt](https://www.npmjs.com/package/crates-llms-txt)
-- **Source:** `npm/`
-
-**Installation:**
-
-```bash
-npm install crates-llms-txt
-# or
-yarn add crates-llms-txt
-# or
-pnpm add crates-llms-txt
-```
-
-**Usage Example:**
-
-```typescript
-import { getLlmsConfigOnlineByCratesName } from "crates-llms-txt";
-
-async function main() {
-  const config = await getLlmsConfigOnlineByCratesName("tokio", "1"); // Example: Get latest 1.x for tokio
-  if (config) {
-    console.log(`Fetched config for ${config.libName} v${config.version}`);
-    config.sessions.forEach(session => {
-      console.log(`  Session: ${session.title} - ${session.link}`);
-    });
-    // config.fullSessions.forEach(session => {
-    //   console.log(`  Full Session Content (first 50 chars): ${session.content.substring(0, 50)}...`);
-    // });
-  } else {
-    console.log("Failed to fetch LLMs config.");
-  }
-}
-
-main();
-```
-
-#### API
-
-All functions return `null` if the underlying NAPI call fails or if the JSON parsing of session data is unsuccessful.
-
-##### `getLlmsConfigOnlineByCratesName(libName: string, version?: string): Promise<LLMsStandardConfig | null>`
-
-Get the LLMs config from the online API by crates name. `sessions` and `fullSessions` are parsed into objects.
-
--   `libName: string`: The name of the library.
--   `version?: string`: The version of the library. (Optional, defaults to latest if not specified).
--   **Returns:** `Promise<LLMsStandardConfig | null>` - The LLMs config with parsed sessions, or `null` on error.
-
-##### `getLlmsConfigOnlineByUrl(url: string): Promise<LLMsStandardConfig | null>`
-
-Get the LLMs config from the online API by URL. `sessions` and `fullSessions` are parsed into objects.
-
--   `url: string`: The direct URL to the crate's JSON documentation index.
--   **Returns:** `Promise<LLMsStandardConfig | null>` - The LLMs config with parsed sessions, or `null` on error.
-
-##### `getLlmsConfigByRustdocAllFeatures(toolchain: string, manifestPath: string): LLMsStandardConfig | null`
-
-Get the LLMs config by generating documentation locally using `rustdoc` with all features enabled. `sessions` and `fullSessions` are parsed into objects. Requires a local Rust toolchain.
-
--   `toolchain: string`: The Rust toolchain to use (e.g., "stable", "nightly").
--   `manifestPath: string`: Path to the `Cargo.toml` file of the crate.
--   **Returns:** `LLMsStandardConfig | null` - The LLMs config with parsed sessions, or `null` on error.
-
-##### `getLlmsConfigByRustdocFeatures(toolchain: string, manifestPath: string, noDefaultFeatures: boolean, features?: string[]): LLMsStandardConfig | null`
-
-Get the LLMs config by generating documentation locally using `rustdoc` with specified features. `sessions` and `fullSessions` are parsed into objects. Requires a local Rust toolchain.
-
--   `toolchain: string`: The Rust toolchain to use (e.g., "stable", "nightly").
--   `manifestPath: string`: Path to the `Cargo.toml` file of the crate.
--   `noDefaultFeatures: boolean`: Whether to disable the default features.
--   `features?: string[]`: Optional list of features to enable.
--   **Returns:** `LLMsStandardConfig | null` - The LLMs config with parsed sessions, or `null` on error.
-
-#### Types
-
-These are the primary types returned by the API functions.
-
-```typescript
-/**
- * SessionItem is the session item.
- */
-export type SessionItem = {
-  title: string;
-  description: string;
-  link: string;
-};
-
-/**
- * FullSessionItem is the full session item.
- */
-export type FullSessionItem = {
-  content: string;
-  link: string;
-};
-
-/**
- * LLMsStandardConfig is the standard config for LLMs.
- * It contains the library name, version, and parsed session data.
- */
-export type LLMsStandardConfig = {
-  libName: string;
-  version: string;
-  sessions: SessionItem[];
-  fullSessions: FullSessionItem[];
-};
-```
 
 ## License
 
@@ -323,14 +269,10 @@ MIT License
 
 <!-- Badges -->
 
-[npm-napi-version-src]: https://img.shields.io/npm/v/crates-llms-txt-napi?style=flat&colorA=080f12&colorB=1fa669&label=napi
-[npm-napi-version-href]: https://npmjs.com/package/crates-llms-txt-napi
-[npm-napi-downloads-src]: https://img.shields.io/npm/dm/crates-llms-txt-napi?style=flat&colorA=080f12&colorB=1fa669&label=napi-download
-[npm-napi-downloads-href]: https://npmjs.com/package/crates-llms-txt-napi
-[npm-version-src]: https://img.shields.io/npm/v/crates-llms-txt?style=flat&colorA=080f12&colorB=1fa669
-[npm-version-href]: https://npmjs.com/package/crates-llms-txt
-[npm-downloads-src]: https://img.shields.io/npm/dm/crates-llms-txt?style=flat&colorA=080f12&colorB=1fa669&label=npm-download
-[npm-downloads-href]: https://npmjs.com/package/crates-llms-txt
+[npm-version-src]: https://img.shields.io/npm/v/crates-llms-txt-napi?style=flat&colorA=080f12&colorB=1fa669
+[npm-version-href]: https://npmjs.com/package/crates-llms-txt-napi
+[npm-downloads-src]: https://img.shields.io/npm/dm/crates-llms-txt-napi?style=flat&colorA=080f12&colorB=1fa669
+[npm-downloads-href]: https://npmjs.com/package/crates-llms-txt-napi
 [license-src]: https://img.shields.io/github/license/kingsword09/crates_llms_txt.svg?style=flat&colorA=080f12&colorB=1fa669
 [license-href]: https://github.com/kingsword09/crates_llms_txt/blob/main/LICENSE
 [crates-src]: https://img.shields.io/crates/v/crates_llms_txt

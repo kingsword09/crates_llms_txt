@@ -20,64 +20,139 @@ This library provides a standard interface to fetch and parse Rust crate documen
 npm install crates-llms-txt-napi
 ```
 
-## **Usage Example**
+## **Usage Examples**
+
+### Basic Usage - Fetch by Crate Name
 
 ```ts
-import { getLlmsConfigOnlineByCratesName } from 'crates-llms-txt-napi'
+import { fromCrateName } from 'crates-llms-txt-napi'
 
 async function main() {
-  const config = await getLlmsConfigOnlineByCratesName('clap', '4.5.39')
+  // Fetch latest version
+  const config = await fromCrateName('clap')
+
+  // Fetch specific version
+  const specificConfig = await fromCrateName('clap', '4.5.39')
+
+  if (config) {
+    console.log(`Fetched docs for ${config.libName} v${config.version}`)
+    console.log(`Found ${config.sessions.length} documentation sections`)
+  }
 }
 
 main()
 ```
 
-## **API**
+### Advanced Usage - Local Documentation Generation
 
-#### `getLlmsConfigOnlineByCratesName(libName: string, version?: string): Promise<LlMsConfig | null>`
+```ts
+import { fromLocal, fromLocalWithFeatures } from 'crates-llms-txt-napi'
 
-Fetches the standard configuration for a given Rust crate and version from online sources (docs.rs).
+// Generate docs with all features
+const allFeaturesConfig = fromLocal('./Cargo.toml', 'stable')
 
-- `libName: string`: The name of the crate (e.g., "clap").
-- `version?: string`: The version string (optional, if not provided or `undefined`, the latest version of the crate will be attempted).
-- **Returns:** `Promise<LlMsConfig | null>` - A promise that resolves to the `LlMsConfig` object or `null` if an error occurs (e.g., crate not found, network issue).
+// Generate docs with specific features
+const customConfig = fromLocalWithFeatures(
+  './Cargo.toml',
+  true, // no default features
+  ['async', 'serde'], // specific features
+  'nightly', // toolchain
+)
+```
 
-#### `getLlmsConfigOnlineByUrl(url: string): Promise<LlMsConfig | null>`
+## **API Reference**
 
-Fetches the standard configuration for a Rust crate by providing a direct URL to its `docs.rs` JSON documentation file.
+### Online Documentation Functions
 
-- `url: string`: The direct URL to the crate's JSON documentation index (e.g., "https://docs.rs/crate/clap/latest/json").
-- **Returns:** `Promise<LlMsConfig | null>` - A promise that resolves to the `LlMsConfig` object or `null` if an error occurs (e.g., URL not reachable, invalid JSON).
+#### `fromCrateName(libName: string, version?: string): Promise<LLMsConfig | null>`
 
-#### `getLlmsConfigByRustdocAllFeatures(toolchain: string, manifestPath: string): LlMsConfig | null`
+Fetches Rust crate documentation from docs.rs by crate name and version.
 
-Generates the LLM configuration for a local Rust crate by invoking `cargo doc` with all features enabled. This function requires a local Rust toolchain.
+- `libName: string`: The name of the crate as it appears on crates.io (e.g., "clap", "serde", "tokio")
+- `version?: string`: Optional version string. If not provided, the latest version will be fetched
+- **Returns:** `Promise<LLMsConfig | null>` - Documentation configuration or null if failed
 
-- `toolchain: string`: The Rust toolchain to use (e.g., "stable", "nightly").
-- `manifestPath: string`: Absolute or relative path to the `Cargo.toml` file of the local crate.
-- **Returns:** `LlMsConfig | null` - The `LlMsConfig` object or `null` if an error occurs during documentation generation.
+#### `fromUrl(url: string): Promise<LLMsConfig | null>`
 
-#### `getLlmsConfigByRustdocFeatures(toolchain: string, manifestPath: string, noDefaultFeatures: boolean, features?: string[]): LlMsConfig | null`
+Fetches documentation from a direct URL to the JSON documentation.
 
-Generates the LLM configuration for a local Rust crate by invoking `cargo doc` with specified features. This function requires a local Rust toolchain.
+- `url: string`: Direct URL to the crate's JSON documentation (e.g., "https://docs.rs/crate/clap/latest/json")
+- **Returns:** `Promise<LLMsConfig | null>` - Documentation configuration or null if failed
 
-- `toolchain: string`: The Rust toolchain to use (e.g., "stable", "nightly").
-- `manifestPath: string`: Absolute or relative path to the `Cargo.toml` file of the local crate.
-- `noDefaultFeatures: boolean`: If `true`, disables the default features of the crate.
-- `features?: string[]`: An optional list of features to enable.
-- **Returns:** `LlMsConfig | null` - The `LlMsConfig` object or `null` if an error occurs during documentation generation.
+#### `fromOnline(params: LLMsConfigByCrate | LLMsConfigByUrl): Promise<LLMsConfig | null>`
 
-**`LlMsConfig` Type:**
+Unified function for fetching documentation from online sources.
+
+- `params`: Either `{ libName: string, version?: string }` or `{ url: string }`
+- **Returns:** `Promise<LLMsConfig | null>` - Documentation configuration or null if failed
+
+### Local Documentation Functions
+
+#### `fromLocal(manifestPath: string, toolchain?: string): LLMsConfig | null`
+
+Generates documentation for a local crate with all features enabled.
+
+- `manifestPath: string`: Path to the Cargo.toml file
+- `toolchain?: string`: Optional Rust toolchain (e.g., "stable", "nightly")
+- **Returns:** `LLMsConfig | null` - Documentation configuration or null if failed
+
+#### `fromLocalWithFeatures(manifestPath: string, noDefaultFeatures: boolean, features?: string[], toolchain?: string): LLMsConfig | null`
+
+Generates documentation with fine-grained feature control.
+
+- `manifestPath: string`: Path to the Cargo.toml file
+- `noDefaultFeatures: boolean`: Whether to disable default features
+- `features?: string[]`: Optional array of features to enable
+- `toolchain?: string`: Optional Rust toolchain
+- **Returns:** `LLMsConfig | null` - Documentation configuration or null if failed
+
+#### `fromLocalByRustdoc(params: LLMsConfigRustdocByAllFeatures | LLMsConfigRustdocByFeatures): LLMsConfig | null`
+
+Unified function for local documentation generation with flexible configuration.
+
+- `params`: Either all-features config or specific-features config
+- **Returns:** `LLMsConfig | null` - Documentation configuration or null if failed
+
+### TypeScript Types
 
 ```typescript
-type SessionItem = { title: string; description: string; link: string }
-type FullSessionItem = { content: string; link: string }
+interface SessionItem {
+  title: string
+  description: string
+  link: string
+}
 
-export type LlMsConfig = {
+interface FullSessionItem {
+  content: string
+  link: string
+}
+
+interface LLMsConfig {
   libName: string
   version: string
-  sessions: string /*SessionItem[]*/
-  fullSessions: string /*FullSessionItem[]*/
+  sessions: SessionItem[]
+  fullSessions: FullSessionItem[]
+}
+
+interface LLMsConfigByCrate {
+  libName: string
+  version?: string
+}
+
+interface LLMsConfigByUrl {
+  url: string
+}
+
+interface LLMsConfigRustdocByAllFeatures {
+  toolchain?: string
+  manifestPath: string
+}
+
+interface LLMsConfigRustdocByFeatures {
+  toolchain?: string
+  manifestPath: string
+  noDefaultFeatures: boolean
+  features?: string[]
 }
 ```
 
