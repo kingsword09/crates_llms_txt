@@ -29,41 +29,6 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 jobs:
-  lint:
-    name: Lint
-    runs-on: ubuntu-latest
-
-    steps:
-      - uses: actions/checkout@v4
-      - name: setup pnpm
-        uses: pnpm/action-setup@v4
-        with:
-          version: "10.11.1"
-      - name: Setup node
-        uses: actions/setup-node@v4
-        with:
-          node-version: 22
-          cache: "pnpm"
-          cache-dependency-path: "**/pnpm-lock.yaml"
-
-      - name: Install
-        uses: dtolnay/rust-toolchain@stable
-        with:
-          components: clippy, rustfmt
-
-      - name: Install dependencies
-        run: pnpm install
-        working-directory: ${{ env.WORKING_DIR_PATH }}
-
-      - name: ESLint
-        run: pnpm lint
-
-      - name: Cargo fmt
-        run: cargo fmt -- --check
-
-      - name: Clippy
-        run: cargo clippy
-
   build:
     strategy:
       fail-fast: false
@@ -117,7 +82,7 @@ jobs:
       - name: setup pnpm
         uses: pnpm/action-setup@v4
         with:
-          version: "10.11.1"
+          version: "10.14.0"
       - name: Setup node
         uses: actions/setup-node@v4
         with:
@@ -202,7 +167,7 @@ jobs:
       - name: setup pnpm
         uses: pnpm/action-setup@v4
         with:
-          version: "10.11.1"
+          version: "10.14.0"
       - name: Setup node
         uses: actions/setup-node@v4
         with:
@@ -246,7 +211,7 @@ jobs:
       - name: setup pnpm
         uses: pnpm/action-setup@v4
         with:
-          version: "10.11.1"
+          version: "10.14.0"
       - name: Setup node
         uses: actions/setup-node@v4
         with:
@@ -306,7 +271,6 @@ jobs:
     environment: npm
 
     needs:
-      - lint
       - build
       - test-macOS-windows-binding
       - test-linux-binding
@@ -315,7 +279,7 @@ jobs:
       - name: setup pnpm
         uses: pnpm/action-setup@v4
         with:
-          version: "10.11.1"
+          version: "10.14.0"
       - name: Setup node
         uses: actions/setup-node@v4
         with:

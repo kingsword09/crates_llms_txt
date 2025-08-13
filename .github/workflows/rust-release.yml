@@ -1,0 +1,24 @@
+name: Rust-release
+on:
+  workflow_call:
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    environment: release  # Optional: for enhanced security
+    permissions:
+      id-token: write     # Required for OIDC token exchange
+    steps:
+    - uses: actions/checkout@v4
+    - uses: rust-lang/crates-io-auth-action@v1
+      id: auth
+    - run: |
+        if git log -1 --pretty=%B | grep "^chore(rs-lib): release v[0-9]\+\.[0-9]\+\.[0-9]\+$";
+          then
+            cargo publish
+        else
+          echo "Not a release commit, skipping publish"
+        fi
+      working-directory: ${{ github.workspace }}/rs-lib
+      env:
+        CARGO_REGISTRY_TOKEN: ${{ steps.auth.outputs.token }}

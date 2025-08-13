@@ -1,0 +1,21 @@
+name: CI
+env:
+  WORKING_DIR_PATH: ${{ github.workspace }}/napi
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}-${{ github.event_name }}
+  cancel-in-progress: true
+
+jobs:
+  lint:
+    uses: ./.github/workflows/lint.yml
+  rust-release:
+    uses: ./.github/workflows/rust-release.yml
