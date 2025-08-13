@@ -1,6 +1,4 @@
 name: CI
-env:
-  WORKING_DIR_PATH: ${{ github.workspace }}/napi
 
 on:
   push:
@@ -16,6 +14,37 @@ concurrency:
 
 jobs:
   lint:
-    uses: ./.github/workflows/lint.yml
-  rust-release:
-    uses: ./.github/workflows/rust-release.yml
+    name: Lint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: "10.14.0"
+          run_install: false
+      - name: Setup node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: "pnpm"
+          cache-dependency-path: "**/pnpm-lock.yaml"
+
+      - name: Install Rust toolchain
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          components: clippy, rustfmt
+
+      - name: Cargo fmt
+        run: cargo fmt -- --check
+
+      - name: Clippy
+        run: cargo clippy --all-targets --all-features -- -D warnings
+
+      - name: Install dependencies
+        run: pnpm install
+        working-directory: ${{ github.workspace }}/napi
+
+      - name: Oxlint
+        run: pnpm lint
+        working-directory: ${{ github.workspace }}/napi
