@@ -1,6 +1,6 @@
 {
-  "name": "crates-llms-txt-darwin-arm64",
-  "version": "0.1.0",
+  "name": "crates-llms-txt-napi-darwin-arm64",
+  "version": "0.0.8",
   "cpu": [
     "arm64"
   ],

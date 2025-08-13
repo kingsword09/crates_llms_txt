@@ -78,12 +78,7 @@ function requireNative() {
         loadErrors.push(e)
       }
       try {
-        const binding = require('crates-llms-txt-android-arm64')
-        const bindingPackageVersion = require('crates-llms-txt-android-arm64/package.json').version
-        if (bindingPackageVersion !== '0.1.0' && process.env.NAPI_RS_ENFORCE_VERSION_CHECK && process.env.NAPI_RS_ENFORCE_VERSION_CHECK !== '0') {
-          throw new Error(`Native binding package version mismatch, expected 0.1.0 but got ${bindingPackageVersion}. You can reinstall dependencies to fix this issue.`)
-        }
-        return binding
+        return require('crates-llms-txt-napi-android-arm64')
       } catch (e) {
         loadErrors.push(e)
       }
@@ -94,12 +89,7 @@ function requireNative() {
         loadErrors.push(e)
       }
       try {
-        const binding = require('crates-llms-txt-android-arm-eabi')
-        const bindingPackageVersion = require('crates-llms-txt-android-arm-eabi/package.json').version
-        if (bindingPackageVersion !== '0.1.0' && process.env.NAPI_RS_ENFORCE_VERSION_CHECK && process.env.NAPI_RS_ENFORCE_VERSION_CHECK !== '0') {
-          throw new Error(`Native binding package version mismatch, expected 0.1.0 but got ${bindingPackageVersion}. You can reinstall dependencies to fix this issue.`)
-        }
-        return binding
+        return require('crates-llms-txt-napi-android-arm-eabi')
       } catch (e) {
         loadErrors.push(e)
       }
@@ -114,12 +104,7 @@ function requireNative() {
         loadErrors.push(e)
       }
       try {
-        const binding = require('crates-llms-txt-win32-x64-msvc')
-        const bindingPackageVersion = require('crates-llms-txt-win32-x64-msvc/package.json').version
-        if (bindingPackageVersion !== '0.1.0' && process.env.NAPI_RS_ENFORCE_VERSION_CHECK && process.env.NAPI_RS_ENFORCE_VERSION_CHECK !== '0') {
-          throw new Error(`Native binding package version mismatch, expected 0.1.0 but got ${bindingPackageVersion}. You can reinstall dependencies to fix this issue.`)
-        }
-        return binding
+        return require('crates-llms-txt-napi-win32-x64-msvc')
       } catch (e) {
         loadErrors.push(e)
       }
@@ -130,12 +115,7 @@ function requireNative() {
         loadErrors.push(e)
       }
       try {
-        const binding = require('crates-llms-txt-win32-ia32-msvc')
-        const bindingPackageVersion = require('crates-llms-txt-win32-ia32-msvc/package.json').version
-        if (bindingPackageVersion !== '0.1.0' && process.env.NAPI_RS_ENFORCE_VERSION_CHECK && process.env.NAPI_RS_ENFORCE_VERSION_CHECK !== '0') {
-          throw new Error(`Native binding package version mismatch, expected 0.1.0 but got ${bindingPackageVersion}. You can reinstall dependencies to fix this issue.`)
-        }
-        return binding
+        return require('crates-llms-txt-napi-win32-ia32-msvc')
       } catch (e) {
         loadErrors.push(e)
       }
@@ -146,12 +126,7 @@ function requireNative() {
         loadErrors.push(e)
       }
       try {
-        const binding = require('crates-llms-txt-win32-arm64-msvc')
-        const bindingPackageVersion = require('crates-llms-txt-win32-arm64-msvc/package.json').version
-        if (bindingPackageVersion !== '0.1.0' && process.env.NAPI_RS_ENFORCE_VERSION_CHECK && process.env.NAPI_RS_ENFORCE_VERSION_CHECK !== '0') {
-          throw new Error(`Native binding package version mismatch, expected 0.1.0 but got ${bindingPackageVersion}. You can reinstall dependencies to fix this issue.`)
-        }
-        return binding
+        return require('crates-llms-txt-napi-win32-arm64-msvc')
       } catch (e) {
         loadErrors.push(e)
       }
@@ -165,12 +140,7 @@ function requireNative() {
       loadErrors.push(e)
     }
     try {
-      const binding = require('crates-llms-txt-darwin-universal')
-      const bindingPackageVersion = require('crates-llms-txt-darwin-universal/package.json').version
-      if (bindingPackageVersion !== '0.1.0' && process.env.NAPI_RS_ENFORCE_VERSION_CHECK && process.env.NAPI_RS_ENFORCE_VERSION_CHECK !== '0') {
-        throw new Error(`Native binding package version mismatch, expected 0.1.0 but got ${bindingPackageVersion}. You can reinstall dependencies to fix this issue.`)
-      }
-      return binding
+      return require('crates-llms-txt-napi-darwin-universal')
     } catch (e) {
       loadErrors.push(e)
     }
@@ -181,12 +151,7 @@ function requireNative() {
         loadErrors.push(e)
       }
       try {
-        const binding = require('crates-llms-txt-darwin-x64')
-        const bindingPackageVersion = require('crates-llms-txt-darwin-x64/package.json').version
-        if (bindingPackageVersion !== '0.1.0' && process.env.NAPI_RS_ENFORCE_VERSION_CHECK && process.env.NAPI_RS_ENFORCE_VERSION_CHECK !== '0') {
-          throw new Error(`Native binding package version mismatch, expected 0.1.0 but got ${bindingPackageVersion}. You can reinstall dependencies to fix this issue.`)
-        }
-        return binding
+        return require('crates-llms-txt-napi-darwin-x64')
       } catch (e) {
         loadErrors.push(e)
       }
@@ -197,12 +162,7 @@ function requireNative() {
         loadErrors.push(e)
       }
       try {
-        const binding = require('crates-llms-txt-darwin-arm64')
-        const bindingPackageVersion = require('crates-llms-txt-darwin-arm64/package.json').version
-        if (bindingPackageVersion !== '0.1.0' && process.env.NAPI_RS_ENFORCE_VERSION_CHECK && process.env.NAPI_RS_ENFORCE_VERSION_CHECK !== '0') {
-          throw new Error(`Native binding package version mismatch, expected 0.1.0 but got ${bindingPackageVersion}. You can reinstall dependencies to fix this issue.`)
-        }
-        return binding
+        return require('crates-llms-txt-napi-darwin-arm64')
       } catch (e) {
         loadErrors.push(e)
       }
@@ -217,12 +177,7 @@ function requireNative() {
         loadErrors.push(e)
       }
       try {
-        const binding = require('crates-llms-txt-freebsd-x64')
-        const bindingPackageVersion = require('crates-llms-txt-freebsd-x64/package.json').version
-        if (bindingPackageVersion !== '0.1.0' && process.env.NAPI_RS_ENFORCE_VERSION_CHECK && process.env.NAPI_RS_ENFORCE_VERSION_CHECK !== '0') {
-          throw new Error(`Native binding package version mismatch, expected 0.1.0 but got ${bindingPackageVersion}. You can reinstall dependencies to fix this issue.`)
-        }
-        return binding
+        return require('crates-llms-txt-napi-freebsd-x64')
       } catch (e) {
         loadErrors.push(e)
       }
@@ -233,12 +188,7 @@ function requireNative() {
         loadErrors.push(e)
       }
       try {
-        const binding = require('crates-llms-txt-freebsd-arm64')
-        const bindingPackageVersion = require('crates-llms-txt-freebsd-arm64/package.json').version
-        if (bindingPackageVersion !== '0.1.0' && process.env.NAPI_RS_ENFORCE_VERSION_CHECK && process.env.NAPI_RS_ENFORCE_VERSION_CHECK !== '0') {
-          throw new Error(`Native binding package version mismatch, expected 0.1.0 but got ${bindingPackageVersion}. You can reinstall dependencies to fix this issue.`)
-        }
-        return binding
+        return require('crates-llms-txt-napi-freebsd-arm64')
       } catch (e) {
         loadErrors.push(e)
       }
@@ -254,12 +204,7 @@ function requireNative() {
           loadErrors.push(e)
         }
         try {
-          const binding = require('crates-llms-txt-linux-x64-musl')
-          const bindingPackageVersion = require('crates-llms-txt-linux-x64-musl/package.json').version
-          if (bindingPackageVersion !== '0.1.0' && process.env.NAPI_RS_ENFORCE_VERSION_CHECK && process.env.NAPI_RS_ENFORCE_VERSION_CHECK !== '0') {
-            throw new Error(`Native binding package version mismatch, expected 0.1.0 but got ${bindingPackageVersion}. You can reinstall dependencies to fix this issue.`)
-          }
-          return binding
+          return require('crates-llms-txt-napi-linux-x64-musl')
         } catch (e) {
           loadErrors.push(e)
         }
@@ -270,12 +215,7 @@ function requireNative() {
           loadErrors.push(e)
         }
         try {
-          const binding = require('crates-llms-txt-linux-x64-gnu')
-          const bindingPackageVersion = require('crates-llms-txt-linux-x64-gnu/package.json').version
-          if (bindingPackageVersion !== '0.1.0' && process.env.NAPI_RS_ENFORCE_VERSION_CHECK && process.env.NAPI_RS_ENFORCE_VERSION_CHECK !== '0') {
-            throw new Error(`Native binding package version mismatch, expected 0.1.0 but got ${bindingPackageVersion}. You can reinstall dependencies to fix this issue.`)
-          }
-          return binding
+          return require('crates-llms-txt-napi-linux-x64-gnu')
         } catch (e) {
           loadErrors.push(e)
         }
@@ -288,12 +228,7 @@ function requireNative() {
           loadErrors.push(e)
         }
         try {
-          const binding = require('crates-llms-txt-linux-arm64-musl')
-          const bindingPackageVersion = require('crates-llms-txt-linux-arm64-musl/package.json').version
-          if (bindingPackageVersion !== '0.1.0' && process.env.NAPI_RS_ENFORCE_VERSION_CHECK && process.env.NAPI_RS_ENFORCE_VERSION_CHECK !== '0') {
-            throw new Error(`Native binding package version mismatch, expected 0.1.0 but got ${bindingPackageVersion}. You can reinstall dependencies to fix this issue.`)
-          }
-          return binding
+          return require('crates-llms-txt-napi-linux-arm64-musl')
         } catch (e) {
           loadErrors.push(e)
         }
@@ -304,12 +239,7 @@ function requireNative() {
           loadErrors.push(e)
         }
         try {
-          const binding = require('crates-llms-txt-linux-arm64-gnu')
-          const bindingPackageVersion = require('crates-llms-txt-linux-arm64-gnu/package.json').version
-          if (bindingPackageVersion !== '0.1.0' && process.env.NAPI_RS_ENFORCE_VERSION_CHECK && process.env.NAPI_RS_ENFORCE_VERSION_CHECK !== '0') {
-            throw new Error(`Native binding package version mismatch, expected 0.1.0 but got ${bindingPackageVersion}. You can reinstall dependencies to fix this issue.`)
-          }
-          return binding
+          return require('crates-llms-txt-napi-linux-arm64-gnu')
         } catch (e) {
           loadErrors.push(e)
         }
@@ -322,12 +252,7 @@ function requireNative() {
           loadErrors.push(e)
         }
         try {
-          const binding = require('crates-llms-txt-linux-arm-musleabihf')
-          const bindingPackageVersion = require('crates-llms-txt-linux-arm-musleabihf/package.json').version
-          if (bindingPackageVersion !== '0.1.0' && process.env.NAPI_RS_ENFORCE_VERSION_CHECK && process.env.NAPI_RS_ENFORCE_VERSION_CHECK !== '0') {
-            throw new Error(`Native binding package version mismatch, expected 0.1.0 but got ${bindingPackageVersion}. You can reinstall dependencies to fix this issue.`)
-          }
-          return binding
+          return require('crates-llms-txt-napi-linux-arm-musleabihf')
         } catch (e) {
           loadErrors.push(e)
         }
@@ -338,12 +263,7 @@ function requireNative() {
           loadErrors.push(e)
         }
         try {
-          const binding = require('crates-llms-txt-linux-arm-gnueabihf')
-          const bindingPackageVersion = require('crates-llms-txt-linux-arm-gnueabihf/package.json').version
-          if (bindingPackageVersion !== '0.1.0' && process.env.NAPI_RS_ENFORCE_VERSION_CHECK && process.env.NAPI_RS_ENFORCE_VERSION_CHECK !== '0') {
-            throw new Error(`Native binding package version mismatch, expected 0.1.0 but got ${bindingPackageVersion}. You can reinstall dependencies to fix this issue.`)
-          }
-          return binding
+          return require('crates-llms-txt-napi-linux-arm-gnueabihf')
         } catch (e) {
           loadErrors.push(e)
         }
@@ -356,12 +276,7 @@ function requireNative() {
           loadErrors.push(e)
         }
         try {
-          const binding = require('crates-llms-txt-linux-riscv64-musl')
-          const bindingPackageVersion = require('crates-llms-txt-linux-riscv64-musl/package.json').version
-          if (bindingPackageVersion !== '0.1.0' && process.env.NAPI_RS_ENFORCE_VERSION_CHECK && process.env.NAPI_RS_ENFORCE_VERSION_CHECK !== '0') {
-            throw new Error(`Native binding package version mismatch, expected 0.1.0 but got ${bindingPackageVersion}. You can reinstall dependencies to fix this issue.`)
-          }
-          return binding
+          return require('crates-llms-txt-napi-linux-riscv64-musl')
         } catch (e) {
           loadErrors.push(e)
         }
@@ -372,12 +287,7 @@ function requireNative() {
           loadErrors.push(e)
         }
         try {
-          const binding = require('crates-llms-txt-linux-riscv64-gnu')
-          const bindingPackageVersion = require('crates-llms-txt-linux-riscv64-gnu/package.json').version
-          if (bindingPackageVersion !== '0.1.0' && process.env.NAPI_RS_ENFORCE_VERSION_CHECK && process.env.NAPI_RS_ENFORCE_VERSION_CHECK !== '0') {
-            throw new Error(`Native binding package version mismatch, expected 0.1.0 but got ${bindingPackageVersion}. You can reinstall dependencies to fix this issue.`)
-          }
-          return binding
+          return require('crates-llms-txt-napi-linux-riscv64-gnu')
         } catch (e) {
           loadErrors.push(e)
         }
@@ -389,12 +299,7 @@ function requireNative() {
         loadErrors.push(e)
       }
       try {
-        const binding = require('crates-llms-txt-linux-ppc64-gnu')
-        const bindingPackageVersion = require('crates-llms-txt-linux-ppc64-gnu/package.json').version
-        if (bindingPackageVersion !== '0.1.0' && process.env.NAPI_RS_ENFORCE_VERSION_CHECK && process.env.NAPI_RS_ENFORCE_VERSION_CHECK !== '0') {
-          throw new Error(`Native binding package version mismatch, expected 0.1.0 but got ${bindingPackageVersion}. You can reinstall dependencies to fix this issue.`)
-        }
-        return binding
+        return require('crates-llms-txt-napi-linux-ppc64-gnu')
       } catch (e) {
         loadErrors.push(e)
       }
@@ -405,12 +310,7 @@ function requireNative() {
         loadErrors.push(e)
       }
       try {
-        const binding = require('crates-llms-txt-linux-s390x-gnu')
-        const bindingPackageVersion = require('crates-llms-txt-linux-s390x-gnu/package.json').version
-        if (bindingPackageVersion !== '0.1.0' && process.env.NAPI_RS_ENFORCE_VERSION_CHECK && process.env.NAPI_RS_ENFORCE_VERSION_CHECK !== '0') {
-          throw new Error(`Native binding package version mismatch, expected 0.1.0 but got ${bindingPackageVersion}. You can reinstall dependencies to fix this issue.`)
-        }
-        return binding
+        return require('crates-llms-txt-napi-linux-s390x-gnu')
       } catch (e) {
         loadErrors.push(e)
       }
@@ -420,49 +320,34 @@ function requireNative() {
   } else if (process.platform === 'openharmony') {
     if (process.arch === 'arm64') {
       try {
-        return require('./crates-llms-txt.openharmony-arm64.node')
+        return require('./crates-llms-txt.linux-arm64-ohos.node')
       } catch (e) {
         loadErrors.push(e)
       }
       try {
-        const binding = require('crates-llms-txt-openharmony-arm64')
-        const bindingPackageVersion = require('crates-llms-txt-openharmony-arm64/package.json').version
-        if (bindingPackageVersion !== '0.1.0' && process.env.NAPI_RS_ENFORCE_VERSION_CHECK && process.env.NAPI_RS_ENFORCE_VERSION_CHECK !== '0') {
-          throw new Error(`Native binding package version mismatch, expected 0.1.0 but got ${bindingPackageVersion}. You can reinstall dependencies to fix this issue.`)
-        }
-        return binding
+        return require('crates-llms-txt-napi-linux-arm64-ohos')
       } catch (e) {
         loadErrors.push(e)
       }
     } else if (process.arch === 'x64') {
       try {
-        return require('./crates-llms-txt.openharmony-x64.node')
+        return require('./crates-llms-txt.linux-x64-ohos.node')
       } catch (e) {
         loadErrors.push(e)
       }
       try {
-        const binding = require('crates-llms-txt-openharmony-x64')
-        const bindingPackageVersion = require('crates-llms-txt-openharmony-x64/package.json').version
-        if (bindingPackageVersion !== '0.1.0' && process.env.NAPI_RS_ENFORCE_VERSION_CHECK && process.env.NAPI_RS_ENFORCE_VERSION_CHECK !== '0') {
-          throw new Error(`Native binding package version mismatch, expected 0.1.0 but got ${bindingPackageVersion}. You can reinstall dependencies to fix this issue.`)
-        }
-        return binding
+        return require('crates-llms-txt-napi-linux-x64-ohos')
       } catch (e) {
         loadErrors.push(e)
       }
     } else if (process.arch === 'arm') {
       try {
-        return require('./crates-llms-txt.openharmony-arm.node')
+        return require('./crates-llms-txt.linux-arm-ohos.node')
       } catch (e) {
         loadErrors.push(e)
       }
       try {
-        const binding = require('crates-llms-txt-openharmony-arm')
-        const bindingPackageVersion = require('crates-llms-txt-openharmony-arm/package.json').version
-        if (bindingPackageVersion !== '0.1.0' && process.env.NAPI_RS_ENFORCE_VERSION_CHECK && process.env.NAPI_RS_ENFORCE_VERSION_CHECK !== '0') {
-          throw new Error(`Native binding package version mismatch, expected 0.1.0 but got ${bindingPackageVersion}. You can reinstall dependencies to fix this issue.`)
-        }
-        return binding
+        return require('crates-llms-txt-napi-linux-arm-ohos')
       } catch (e) {
         loadErrors.push(e)
       }
@@ -486,7 +371,7 @@ if (!nativeBinding || process.env.NAPI_RS_FORCE_WASI) {
   }
   if (!nativeBinding) {
     try {
-      nativeBinding = require('crates-llms-txt-wasm32-wasi')
+      nativeBinding = require('crates-llms-txt-napi-wasm32-wasi')
     } catch (err) {
       if (process.env.NAPI_RS_FORCE_WASI) {
         loadErrors.push(err)

@@ -1,5 +1,5 @@
 {
-  "name": "crates-llms-txt-darwin-x64",
+  "name": "crates-llms-txt-napi-darwin-x64",
   "version": "0.1.0",
   "cpu": [
     "x64"

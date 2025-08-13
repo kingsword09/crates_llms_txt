@@ -1,3 +1,3 @@
-# `crates-llms-txt-linux-x64-gnu`
+# `crates-llms-txt-napi-linux-x64-gnu`
 
-This is the **x86_64-unknown-linux-gnu** binary for `crates-llms-txt`
+This is the **x86_64-unknown-linux-gnu** binary for `crates-llms-txt-napi`

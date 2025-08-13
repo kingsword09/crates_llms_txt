@@ -1,5 +1,5 @@
 {
-  "name": "crates-llms-txt-win32-ia32-msvc",
+  "name": "crates-llms-txt-napi-win32-ia32-msvc",
   "version": "0.1.0",
   "cpu": [
     "ia32"

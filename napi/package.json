@@ -26,11 +26,12 @@
   ],
   "files": [
     "index.d.ts",
+    "index.cjs",
     "index.js"
   ],
   "napi": {
     "binaryName": "crates-llms-txt",
-    "packageName": "crates-llms-txt",
+    "packageName": "crates-llms-txt-napi",
     "targets": [
       "x86_64-apple-darwin",
       "aarch64-apple-darwin",
