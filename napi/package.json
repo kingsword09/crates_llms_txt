@@ -1,7 +1,8 @@
 {
-  "name": "crates-llms-txt-napi",
-  "version": "0.0.8",
+  "name": "crates-llms-txt",
+  "version": "0.1.0",
   "description": "A repository for generating content for llms.txt and llms-full.txt files used by Rust libraries.",
+  "type": "module",
   "main": "index.js",
   "module": "index.js",
   "types": "index.d.ts",
@@ -29,6 +30,7 @@
   ],
   "napi": {
     "binaryName": "crates-llms-txt",
+    "packageName": "crates-llms-txt",
     "targets": [
       "x86_64-apple-darwin",
       "aarch64-apple-darwin",
@@ -40,8 +42,12 @@
       "armv7-unknown-linux-gnueabihf",
       "aarch64-unknown-linux-musl",
       "aarch64-pc-windows-msvc"
-    ],
-    "packageName": "crates-llms-txt-napi"
+    ]
+  },
+  "exports": {
+    "import": "./index.js",
+    "require": "./index.cjs",
+    "types": "./index.d.ts"
   },
   "engines": {
     "node": ">= 10"
@@ -52,8 +58,8 @@
   },
   "scripts": {
     "artifacts": "napi artifacts",
-    "build": "napi build --platform --release",
-    "build:debug": "napi build --platform",
+    "build": "napi build --platform --release --js index.cjs",
+    "build:debug": "napi build --platform --js index.cjs",
     "format": "run-p format:prettier format:rs format:toml",
     "format:prettier": "prettier . -w",
     "format:toml": "taplo format",
@@ -65,7 +71,7 @@
   },
   "devDependencies": {
     "@inquirer/prompts": "^7.5.1",
-    "@napi-rs/cli": "^3.0.1",
+    "@napi-rs/cli": "^3.1.3",
     "@oxc-node/core": "^0.0.27",
     "@taplo/cli": "^0.7.0",
     "@types/node": "^22.15.21",
@@ -110,17 +116,5 @@
     "singleQuote": true,
     "arrowParens": "always"
   },
-  "packageManager": "pnpm@10.13.1",
-  "optionalDependencies": {
-    "crates-llms-txt-napi-darwin-x64": "0.0.8",
-    "crates-llms-txt-napi-darwin-arm64": "0.0.8",
-    "crates-llms-txt-napi-linux-x64-gnu": "0.0.8",
-    "crates-llms-txt-napi-win32-x64-msvc": "0.0.8",
-    "crates-llms-txt-napi-linux-x64-musl": "0.0.8",
-    "crates-llms-txt-napi-linux-arm64-gnu": "0.0.8",
-    "crates-llms-txt-napi-win32-ia32-msvc": "0.0.8",
-    "crates-llms-txt-napi-linux-arm-gnueabihf": "0.0.8",
-    "crates-llms-txt-napi-linux-arm64-musl": "0.0.8",
-    "crates-llms-txt-napi-win32-arm64-msvc": "0.0.8"
-  }
+  "packageManager": "pnpm@10.14.0"
 }

@@ -2,7 +2,7 @@
 authors = ["Kingsword kingsword09 <kingsword09@gmail.com>"]
 edition = "2021"
 name = "crates_llms_txt_napi"
-version = "0.0.1"
+version = "0.1.0"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
@@ -10,8 +10,8 @@ version = "0.0.1"
 crate-type = ["cdylib"]
 
 [dependencies]
-napi = { version = "3.1.2", default-features = false,features = ["async", "napi3"] }
-napi-derive = "3.1.1"
+napi = { version = "3.2.2", default-features = false,features = ["async", "napi3"] }
+napi-derive = "3.2.2"
 crates_llms_txt = { path = "../rs-lib", features = ["rustdoc"] }
 
 [target.armv7-unknown-linux-gnueabihf.dependencies]
