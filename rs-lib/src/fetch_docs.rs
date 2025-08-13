@@ -1,11 +1,29 @@
+//! # Online Documentation Fetcher
+//!
+//! This module provides functionality to fetch and process rustdoc JSON data from online sources,
+//! primarily docs.rs. It handles automatic decompression of zstd-compressed data and provides
+//! fallback mechanisms for different rustdoc format versions.
+//!
+//! ## Key Features
+//!
+//! - **Automatic Decompression**: Handles zstd compression used by docs.rs
+//! - **Version Compatibility**: Falls back between different rustdoc JSON formats
+//! - **Error Handling**: Comprehensive error handling for network and parsing issues
+//! - **Flexible URLs**: Support for both docs.rs and custom documentation servers
+
 use reqwest::header;
 use serde::{Deserialize, Serialize};
 
 use crate::error::{Error, Result};
 use crate::temp_trait::{CommonCrates, Crate};
 
+/// Base URL for docs.rs crate documentation API endpoints
 const DOCS_BASE_URL: &str = "https://docs.rs/crate";
 
+/// Utility struct for fetching online documentation from docs.rs and other sources.
+///
+/// This struct provides static methods for downloading, decompressing, and parsing
+/// rustdoc JSON data from various online sources.
 pub struct OnlineDocs;
 
 impl OnlineDocs {
@@ -72,97 +90,54 @@ impl OnlineDocs {
       url,
     )?;
 
-    // Try to parse the JSON data with better error handling
-    Self::parse_json_with_fallback(&decompressed_bytes)
+    serde_json::from_slice::<T>(&decompressed_bytes).map_err(Error::Json)
   }
 
   /// Decompress zstd-compressed data from docs.rs endpoints.
   ///
-  /// docs.rs serves JSON documentation data compressed with zstd. This method
-  /// first checks the Content-Encoding header, then attempts zstd decompression
-  /// as docs.rs always returns compressed data regardless of headers.
+  /// docs.rs serves JSON documentation data compressed with zstd to reduce bandwidth.
+  /// This method implements a two-stage decompression strategy:
+  /// 1. Check the Content-Encoding header for explicit zstd indication
+  /// 2. Attempt zstd decompression regardless, as docs.rs always compresses
   ///
   /// # Arguments
   ///
-  /// * `body_bytes` - Raw response body bytes
+  /// * `body_bytes` - Raw HTTP response body bytes
   /// * `content_encoding` - Content-Encoding header value, if present
-  /// * `_content_type` - Content-Type header value (unused, kept for compatibility)
-  /// * `_url` - Request URL (unused, kept for compatibility)
+  /// * `_content_type` - Content-Type header (reserved for future use)
+  /// * `_url` - Request URL (reserved for future use)
   ///
   /// # Returns
   ///
-  /// * `Result<Vec<u8>>` - Decompressed data, or original data if decompression fails
+  /// * `Result<Vec<u8>>` - Decompressed data, or original data as fallback
+  ///
+  /// # Errors
+  ///
+  /// * `Error::Io` - If zstd decompression fails when explicitly indicated by headers
   fn decompress_if_needed(
     body_bytes: &[u8],
     content_encoding: Option<&str>,
     _content_type: Option<&str>,
     _url: &str,
   ) -> Result<Vec<u8>> {
-    // Check Content-Encoding header first
+    // First, check if the server explicitly indicates zstd compression
     if let Some(encoding) = content_encoding {
       if encoding.eq_ignore_ascii_case("zstd") {
         return Ok(zstd::decode_all(body_bytes).map_err(Error::Io)?);
       } else {
-        // Other encodings should be handled by reqwest automatically
+        // Other encodings (gzip, deflate) are handled automatically by reqwest
         return Ok(body_bytes.to_vec());
       }
     }
 
-    // docs.rs always returns zstd compressed data, try to decompress directly
+    // docs.rs always serves zstd-compressed data regardless of headers,
+    // so attempt decompression even without explicit Content-Encoding
     match zstd::decode_all(body_bytes) {
       Ok(decompressed) => Ok(decompressed),
       Err(_) => {
-        // If decompression fails, treat as plain data (fallback)
+        // If decompression fails, assume the data is already uncompressed
+        // This handles cases where the server doesn't compress or uses different compression
         Ok(body_bytes.to_vec())
-      }
-    }
-  }
-
-  /// Parse JSON data with intelligent error handling for rustdoc version compatibility.
-  ///
-  /// This method first attempts to parse the JSON directly into the target type.
-  /// If that fails, it validates the JSON structure to distinguish between:
-  /// - Malformed JSON (returns Json error)
-  /// - Valid JSON with incompatible structure (returns Config error with helpful message)
-  ///
-  /// # Arguments
-  ///
-  /// * `data` - Raw JSON bytes to parse
-  ///
-  /// # Returns
-  ///
-  /// * `Result<T>` - Parsed data or appropriate error
-  ///
-  /// # Errors
-  ///
-  /// * `Error::Json` - If the JSON is malformed
-  /// * `Error::Config` - If JSON is valid but incompatible with current rustdoc-types version
-  fn parse_json_with_fallback<T>(data: &[u8]) -> Result<T>
-  where
-    T: CommonCrates + Serialize + for<'de> Deserialize<'de>,
-  {
-    // First, try to parse directly
-    match serde_json::from_slice::<T>(data) {
-      Ok(result) => Ok(result),
-      Err(e) => {
-        // If parsing fails, it might be due to version compatibility issues
-        // Try to parse as generic JSON first to validate the structure
-        match serde_json::from_slice::<serde_json::Value>(data) {
-          Ok(_) => {
-            // JSON is valid but doesn't match our expected structure
-            // This is likely a version compatibility issue
-            Err(Error::Config(format!(
-              "JSON structure incompatible with current rustdoc-types version: {}. \
-               This may be due to a mismatch between the rustdoc format version used to \
-               generate the documentation and the rustdoc-types crate version.",
-              e
-            )))
-          }
-          Err(_) => {
-            // JSON itself is invalid
-            Err(Error::Json(e))
-          }
-        }
       }
     }
   }
@@ -208,10 +183,17 @@ impl OnlineDocs {
   pub async fn fetch_docs(
     lib_name: &str,
     version: Option<String>,
-  ) -> Result<rustdoc_types::Crate> {
+  ) -> Result<Box<dyn CommonCrates>> {
     let version = version.unwrap_or("latest".to_string());
     let url = format!("{DOCS_BASE_URL}/{lib_name}/{version}/json");
-    OnlineDocs::fetch_json::<rustdoc_types::Crate>(url.as_str()).await
+
+    match OnlineDocs::fetch_json::<rustdoc_types::Crate>(url.as_str()).await {
+      Ok(result) => Ok(Box::new(result)),
+      Err(_) => match OnlineDocs::fetch_json::<Crate>(url.as_str()).await {
+        Ok(result) => Ok(Box::new(result)),
+        Err(err) => Err(err),
+      },
+    }
   }
 
   /// Fetch rustdoc documentation from a custom URL.
@@ -255,76 +237,54 @@ impl OnlineDocs {
   /// }
   /// ```
   ///
-  pub async fn fetch_docs_by_url(url: &str) -> Result<Crate> {
-    OnlineDocs::fetch_json::<Crate>(url).await
+  pub async fn fetch_docs_by_url(url: &str) -> Result<Box<dyn CommonCrates>> {
+    match OnlineDocs::fetch_json::<rustdoc_types::Crate>(url).await {
+      Ok(result) => Ok(Box::new(result)),
+      Err(_) => match OnlineDocs::fetch_json::<Crate>(url).await {
+        Ok(result) => Ok(Box::new(result)),
+        Err(err) => Err(err),
+      },
+    }
   }
 }
 
 #[cfg(test)]
 mod tests {
-  use crate::*;
+  use crate::{temp_trait::Crate, OnlineDocs, DOCS_BASE_URL};
 
   #[tokio::test]
   async fn test_fetch_docs() {
     let version = "latest".to_string();
-    let result = OnlineDocs::fetch_docs("clap", Some(version.clone())).await;
+    let docs = OnlineDocs::fetch_docs("clap", Some(version.clone()))
+      .await
+      .unwrap();
 
-    match result {
-      Ok(docs) => {
-        // Just check that we got some docs, don't assert on specific version
-        // since "latest" will change over time
-        assert!(docs.crate_version.is_some());
-        println!(
-          "Successfully fetched clap docs, version: {:?}",
-          docs.crate_version
-        );
-      }
-      Err(e) => {
-        // If it fails due to version compatibility, that's expected for some crates
-        match e {
-          crate::error::Error::Config(msg) if msg.contains("incompatible") => {
-            println!("Expected version compatibility issue with clap: {}", msg);
-            // This is acceptable - version mismatch is a known issue
-          }
-          _ => {
-            panic!("Unexpected error fetching clap docs: {:?}", e);
-          }
-        }
-      }
-    }
+    // Just check that we got some docs, don't assert on specific version
+    // since "latest" will change over time
+    assert!(!docs.crate_version().is_empty());
+    println!(
+      "Successfully fetched clap docs, version: {:?}",
+      docs.crate_version()
+    );
   }
 
   #[tokio::test]
   async fn test_fetch_docs_opendal() {
     let version = "latest".to_string();
 
-    let result = OnlineDocs::fetch_docs("opendal", Some(version.clone())).await;
+    let docs = OnlineDocs::fetch_docs("opendal", Some(version.clone()))
+      .await
+      .unwrap();
 
-    match result {
-      Ok(docs) => {
-        println!("Successfully fetched docs for opendal");
-        println!("Crate version: {:?}", docs.crate_version);
-        assert!(docs.crate_version.is_some());
-      }
-      Err(e) => {
-        // If it fails due to version compatibility, that's expected
-        match e {
-          crate::error::Error::Config(msg) if msg.contains("incompatible") => {
-            println!("Expected version compatibility issue: {}", msg);
-            // This is acceptable - version mismatch is a known issue
-          }
-          _ => {
-            panic!("Unexpected error: {:?}", e);
-          }
-        }
-      }
-    }
+    println!("Successfully fetched docs for opendal");
+    println!("Crate version: {:?}", docs.crate_version());
+    assert!(!docs.crate_version().is_empty());
   }
 
   #[tokio::test]
   async fn test_fetch_docs_json_validation() {
     let version = "latest".to_string();
-    let url = format!("{DOCS_BASE_URL}/opendal/{version}/json");
+    let url = format!("{DOCS_BASE_URL}/serde/{version}/json");
 
     let client = reqwest::Client::builder().build().unwrap();
     let response = client.get(&url).send().await.unwrap();
@@ -336,9 +296,21 @@ mod tests {
 
     // Validate that JSON is structurally valid
     let json_valid =
-      serde_json::from_slice::<serde_json::Value>(&decompressed_bytes).is_ok();
+      serde_json::from_slice::<Crate>(&decompressed_bytes).is_ok();
     assert!(json_valid, "Downloaded JSON should be structurally valid");
 
-    println!("Successfully validated JSON structure for opendal docs");
+    println!("Successfully validated JSON structure for serde docs");
+  }
+
+  #[tokio::test]
+  async fn test_fetch_docs_json_validation_x() {
+    let version = "latest".to_string();
+    let json_valid = OnlineDocs::fetch_docs("serde", Some(version.clone()))
+      .await
+      .is_ok();
+
+    assert!(json_valid, "Downloaded JSON should be structurally valid");
+
+    println!("Successfully validated JSON structure for serde docs");
   }
 }
