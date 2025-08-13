@@ -50,7 +50,8 @@ jobs:
         working-directory: ${{ github.workspace }}/napi
   rust-release:
     runs-on: ubuntu-latest
-    environment: release  # Optional: for enhanced security
+    needs:
+      - lint
     permissions:
       id-token: write     # Required for OIDC token exchange
     steps:
