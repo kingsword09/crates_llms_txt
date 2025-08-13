@@ -105,11 +105,11 @@ _Note: This function is only available when the `rustdoc` feature is enabled._
 
 For detailed API usage, including the top-level helper functions, please refer to the documentation within the `rs-lib` directory or on [crates.io](https://crates.io/crates/crates_llms_txt).
 
-### NAPI Package: `crates-llms-txt-napi`
+### NAPI Package: `crates-llms-txt`
 
-The `crates-llms-txt-napi` library is the Node.js/TypeScript implementation, distributed via npm.
+The `crates-llms-txt` library is the Node.js/TypeScript implementation, distributed via npm.
 
-- **NPM Package:** [crates-llms-txt-napi](https://www.npmjs.com/package/crates-llms-txt-napi)
+- **NPM Package:** [crates-llms-txt](https://www.npmjs.com/package/crates-llms-txt)
 - **Source:** `napi/`
 
 **Description:** This library provides a standard interface to fetch and parse Rust crate documentation and session data for use with LLMs (Large Language Models).
@@ -125,30 +125,34 @@ The `crates-llms-txt-napi` library is the Node.js/TypeScript implementation, dis
 **Installation:**
 
 ```bash
-npm install crates-llms-txt-napi
+npm install crates-llms-txt
 ```
 
 **Usage Examples:**
 
 ```typescript
-import { fromCrateName, fromLocal, fromLocalWithFeatures } from 'crates-llms-txt-napi'
+import {
+  fromCrateName,
+  fromLocal,
+  fromLocalWithFeatures,
+} from "crates-llms-txt";
 
 // Fetch latest version from docs.rs
-const config = await fromCrateName('clap')
+const config = await fromCrateName("clap");
 
 // Fetch specific version
-const specificConfig = await fromCrateName('clap', '4.5.39')
+const specificConfig = await fromCrateName("clap", "4.5.39");
 
 // Generate local documentation with all features
-const localConfig = fromLocal('./Cargo.toml', 'stable')
+const localConfig = fromLocal("./Cargo.toml", "stable");
 
 // Generate with specific features
 const customConfig = fromLocalWithFeatures(
-  './Cargo.toml',
+  "./Cargo.toml",
   true, // no default features
-  ['async', 'serde'], // specific features
-  'nightly' // toolchain
-)
+  ["async", "serde"], // specific features
+  "nightly" // toolchain
+);
 ```
 
 **API Reference:**
@@ -205,48 +209,48 @@ Unified function for local documentation generation with flexible configuration.
 
 ```typescript
 interface SessionItem {
-  title: string
-  description: string
-  link: string
+  title: string;
+  description: string;
+  link: string;
 }
 
 interface FullSessionItem {
-  content: string
-  link: string
+  content: string;
+  link: string;
 }
 
 interface LLMsConfig {
-  libName: string
-  version: string
-  sessions: SessionItem[]
-  fullSessions: FullSessionItem[]
+  libName: string;
+  version: string;
+  sessions: SessionItem[];
+  fullSessions: FullSessionItem[];
 }
 
 interface LLMsConfigByCrate {
-  libName: string
-  version?: string
+  libName: string;
+  version?: string;
 }
 
 interface LLMsConfigByUrl {
-  url: string
+  url: string;
 }
 
 interface LLMsConfigRustdocByAllFeatures {
-  toolchain?: string
-  manifestPath: string
+  toolchain?: string;
+  manifestPath: string;
 }
 
 interface LLMsConfigRustdocByFeatures {
-  toolchain?: string
-  manifestPath: string
-  noDefaultFeatures: boolean
-  features?: string[]
+  toolchain?: string;
+  manifestPath: string;
+  noDefaultFeatures: boolean;
+  features?: string[];
 }
 ```
 
 #### Supported Architectures
 
-The `crates-llms-txt-napi` package provides prebuilt binaries for the following target architectures:
+The `crates-llms-txt` package provides prebuilt binaries for the following target architectures:
 
 | Target Triple                   |
 | ------------------------------- |
@@ -261,18 +265,16 @@ The `crates-llms-txt-napi` package provides prebuilt binaries for the following 
 | `aarch64-unknown-linux-musl`    |
 | `armv7-unknown-linux-gnueabihf` |
 
-
-
 ## License
 
 MIT License
 
 <!-- Badges -->
 
-[npm-version-src]: https://img.shields.io/npm/v/crates-llms-txt-napi?style=flat&colorA=080f12&colorB=1fa669
-[npm-version-href]: https://npmjs.com/package/crates-llms-txt-napi
-[npm-downloads-src]: https://img.shields.io/npm/dm/crates-llms-txt-napi?style=flat&colorA=080f12&colorB=1fa669
-[npm-downloads-href]: https://npmjs.com/package/crates-llms-txt-napi
+[npm-version-src]: https://img.shields.io/npm/v/crates-llms-txt?style=flat&colorA=080f12&colorB=1fa669
+[npm-version-href]: https://npmjs.com/package/crates-llms-txt
+[npm-downloads-src]: https://img.shields.io/npm/dm/crates-llms-txt?style=flat&colorA=080f12&colorB=1fa669
+[npm-downloads-href]: https://npmjs.com/package/crates-llms-txt
 [license-src]: https://img.shields.io/github/license/kingsword09/crates_llms_txt.svg?style=flat&colorA=080f12&colorB=1fa669
 [license-href]: https://github.com/kingsword09/crates_llms_txt/blob/main/LICENSE
 [crates-src]: https://img.shields.io/crates/v/crates_llms_txt

@@ -1,4 +1,4 @@
-# [crates-llms-txt-napi](https://www.npmjs.com/package/crates-llms-txt-napi)
+# [crates-llms-txt](https://www.npmjs.com/package/crates-llms-txt)
 
 [![npm version][npm-version-src]][npm-version-href]
 [![npm downloads][npm-downloads-src]][npm-downloads-href]
@@ -17,7 +17,7 @@ This library provides a standard interface to fetch and parse Rust crate documen
 ## **Installation**
 
 ```bash
-npm install crates-llms-txt-napi
+npm install crates-llms-txt
 ```
 
 ## **Usage Examples**
@@ -25,7 +25,7 @@ npm install crates-llms-txt-napi
 ### Basic Usage - Fetch by Crate Name
 
 ```ts
-import { fromCrateName } from 'crates-llms-txt-napi'
+import { fromCrateName } from 'crates-llms-txt'
 
 async function main() {
   // Fetch latest version
@@ -46,7 +46,7 @@ main()
 ### Advanced Usage - Local Documentation Generation
 
 ```ts
-import { fromLocal, fromLocalWithFeatures } from 'crates-llms-txt-napi'
+import { fromLocal, fromLocalWithFeatures } from 'crates-llms-txt'
 
 // Generate docs with all features
 const allFeaturesConfig = fromLocal('./Cargo.toml', 'stable')
@@ -158,7 +158,7 @@ interface LLMsConfigRustdocByFeatures {
 
 ## Supported Architectures
 
-The `crates-llms-txt-napi` package provides prebuilt binaries for the following target architectures:
+The `crates-llms-txt` package provides prebuilt binaries for the following target architectures:
 
 | Target Triple                   |
 | ------------------------------- |
@@ -175,9 +175,9 @@ The `crates-llms-txt-napi` package provides prebuilt binaries for the following 
 
 <!-- Badges -->
 
-[npm-version-src]: https://img.shields.io/npm/v/crates-llms-txt-napi?style=flat&colorA=080f12&colorB=1fa669
-[npm-version-href]: https://npmjs.com/package/crates-llms-txt-napi
-[npm-downloads-src]: https://img.shields.io/npm/dm/crates-llms-txt-napi?style=flat&colorA=080f12&colorB=1fa669
-[npm-downloads-href]: https://npmjs.com/package/crates-llms-txt-napi
+[npm-version-src]: https://img.shields.io/npm/v/crates-llms-txt?style=flat&colorA=080f12&colorB=1fa669
+[npm-version-href]: https://npmjs.com/package/crates-llms-txt
+[npm-downloads-src]: https://img.shields.io/npm/dm/crates-llms-txt?style=flat&colorA=080f12&colorB=1fa669
+[npm-downloads-href]: https://npmjs.com/package/crates-llms-txt
 [license-src]: https://img.shields.io/github/license/kingsword09/crates_llms_txt.svg?style=flat&colorA=080f12&colorB=1fa669
 [license-href]: https://github.com/kingsword09/crates_llms_txt/blob/main/LICENSE
