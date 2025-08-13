@@ -1,6 +1,6 @@
 {
   "name": "crates-llms-txt",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "A repository for generating content for llms.txt and llms-full.txt files used by Rust libraries.",
   "type": "module",
   "main": "index.js",
