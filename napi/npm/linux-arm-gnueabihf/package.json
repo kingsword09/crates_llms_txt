@@ -1,24 +1,6 @@
 {
-  "name": "crates-llms-txt-napi-linux-arm-gnueabihf",
-  "version": "0.0.8",
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/kingsword09/crates_llms_txt.git"
-  },
-  "homepage": "https://github.com/kingsword09/crates_llms_txt#readme",
-  "bugs": {
-    "url": "https://github.com/kingsword09/crates_llms_txt/issues"
-  },
-  "contributors": [
-    "Kingsword kingsword09 <kingsword09@gmail.com>"
-  ],
-  "license": "MIT",
-  "publishConfig": {
-    "access": "public"
-  },
-  "os": [
-    "linux"
-  ],
+  "name": "crates-llms-txt-linux-arm-gnueabihf",
+  "version": "0.1.0",
   "cpu": [
     "arm"
   ],
@@ -26,7 +8,33 @@
   "files": [
     "crates-llms-txt.linux-arm-gnueabihf.node"
   ],
+  "description": "A repository for generating content for llms.txt and llms-full.txt files used by Rust libraries.",
+  "keywords": [
+    "napi-rs",
+    "NAPI",
+    "N-API",
+    "Rust",
+    "node-addon",
+    "node-addon-api"
+  ],
+  "author": "Kingsword kingsword09 <kingsword09@gmail.com>",
+  "homepage": "https://github.com/kingsword09/crates_llms_txt#readme",
+  "license": "MIT",
   "engines": {
     "node": ">= 10"
-  }
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kingsword09/crates_llms_txt.git"
+  },
+  "bugs": {
+    "url": "https://github.com/kingsword09/crates_llms_txt/issues"
+  },
+  "publishConfig": {
+    "registry": "https://registry.npmjs.org/",
+    "access": "public"
+  },
+  "os": [
+    "linux"
+  ]
 }
