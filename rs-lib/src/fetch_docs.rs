@@ -123,7 +123,7 @@ impl OnlineDocs {
     // First, check if the server explicitly indicates zstd compression
     if let Some(encoding) = content_encoding {
       if encoding.eq_ignore_ascii_case("zstd") {
-        return Ok(zstd::decode_all(body_bytes).map_err(Error::Io)?);
+        return zstd::decode_all(body_bytes).map_err(Error::Io);
       } else {
         // Other encodings (gzip, deflate) are handled automatically by reqwest
         return Ok(body_bytes.to_vec());

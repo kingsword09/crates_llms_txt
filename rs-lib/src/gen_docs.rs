@@ -220,7 +220,7 @@ pub fn gen_docs_with_features(
 
   // Generate the documentation JSON
   let json_path = builder.build()?;
-  
+
   // Extract the crate name from the generated file
   let lib_name = json_path
     .as_path()

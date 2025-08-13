@@ -336,7 +336,9 @@ impl CrateDocs {
           let crate_version = Some(docs.crate_version());
           return CrateDocs::process_docs(lib_name, docs, crate_version);
         }
-        Err(Error::Config("Failed to extract crate name from root item".into()))
+        Err(Error::Config(
+          "Failed to extract crate name from root item".into(),
+        ))
       }
       Err(_) => {
         // Fallback to internal format for compatibility
@@ -349,7 +351,9 @@ impl CrateDocs {
               let crate_version = Some(docs.crate_version());
               return CrateDocs::process_docs(lib_name, docs, crate_version);
             }
-            Err(Error::Config("Failed to extract crate name from root item".into()))
+            Err(Error::Config(
+              "Failed to extract crate name from root item".into(),
+            ))
           }
           Err(err) => Err(err),
         }
@@ -367,7 +371,7 @@ impl CrateDocs {
   ///
   /// * `manifest_path` - Path to the Cargo.toml file of the target crate
   /// * `toolchain` - Optional Rust toolchain ("stable", "nightly", etc.)
-  ///                 If None, auto-detects the appropriate toolchain
+  ///   If None, auto-detects the appropriate toolchain
   ///
   /// # Returns
   ///
@@ -416,7 +420,7 @@ impl CrateDocs {
 
     let lib_name = gen_docs_struct.lib_name;
     let docs = gen_docs_struct.docs;
-    return CrateDocs::process_docs(&lib_name, docs, None);
+    CrateDocs::process_docs(&lib_name, docs, None)
   }
 
   /// Generate documentation for a local crate with custom feature configuration.
@@ -488,7 +492,7 @@ impl CrateDocs {
 
     let lib_name = gen_docs_struct.lib_name;
     let docs = gen_docs_struct.docs;
-    return CrateDocs::process_docs(&lib_name, docs, None);
+    CrateDocs::process_docs(&lib_name, docs, None)
   }
 }
 

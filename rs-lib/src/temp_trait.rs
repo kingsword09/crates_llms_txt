@@ -68,12 +68,12 @@ pub struct Item {
 pub trait CommonCrates: Send + Sync {
   /// Returns the ID of the root module of this crate
   fn root_id(&self) -> Id;
-  
+
   /// Returns the version string of this crate
   ///
   /// If no version is available, returns "latest" as a fallback
   fn crate_version(&self) -> String;
-  
+
   /// Returns a mapping of all documented items in this crate
   ///
   /// The HashMap maps item IDs to their corresponding `Item` structures,
@@ -89,16 +89,17 @@ impl CommonCrates for rustdoc_types::Crate {
   fn root_id(&self) -> Id {
     self.root
   }
-  
+
   fn crate_version(&self) -> String {
     self.crate_version.clone().unwrap_or("latest".to_string())
   }
 
   fn index(&self) -> HashMap<Id, Item> {
-    let mut hash_map = HashMap::new();
-    
+    // Pre-allocate HashMap with known capacity for better performance
+    let mut hash_map = HashMap::with_capacity(self.index.len());
+
     // Convert each rustdoc_types::Item to our internal Item format
-    for (&id, item) in self.index.iter() {
+    for (&id, item) in &self.index {
       let converted_item = Item {
         id: item.id,
         crate_id: item.crate_id,
@@ -108,10 +109,11 @@ impl CommonCrates for rustdoc_types::Crate {
         docs: item.docs.clone(),
         links: item.links.clone(),
         // Convert attributes to JSON strings for consistent handling
+        // Use try_collect to handle potential serialization errors gracefully
         attrs: item
           .attrs
           .iter()
-          .map(|attr| serde_json::to_string(attr).unwrap())
+          .filter_map(|attr| serde_json::to_string(attr).ok())
           .collect(),
         deprecation: item.deprecation.clone(),
         inner: item.inner.clone(),
@@ -131,11 +133,11 @@ impl CommonCrates for Crate {
   fn root_id(&self) -> Id {
     self.root
   }
-  
+
   fn crate_version(&self) -> String {
     self.crate_version.clone().unwrap_or("latest".to_string())
   }
-  
+
   fn index(&self) -> HashMap<Id, Item> {
     // Direct clone since the format already matches our internal representation
     self.index.clone()
